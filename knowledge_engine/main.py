@@ -1,23 +1,21 @@
-from knowledge_engine.pipeline.pipeline import Pipeline
-from knowledge_engine.pipeline.pipeline_component import PipelineComponent
-
-
-class TestComponent(PipelineComponent):
-
-    def process(self, data):
-        print(f"Ricevuto: {data}")
-        return data + " -> processed"
+from knowledge_engine.domain.block import Block, BlockType
+from knowledge_engine.domain.section import Section, SectionType
 
 
 def main():
 
-    pipeline = Pipeline()
+    section = Section(
+        title="Installazione",
+        type=SectionType.CHAPTER,
+        blocks=(
+            Block(
+                type=BlockType.TEXT,
+                content="Collegare l'alimentazione."
+            ),
+        ),
+    )
 
-    pipeline.add_component(TestComponent())
-
-    result = pipeline.run("KnowledgeEngine")
-
-    print(result)
+    print(section)
 
 
 if __name__ == "__main__":

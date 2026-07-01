@@ -1,0 +1,423 @@
+KnowledgeEngine – Riassunto della progettazione (Sessione 1)
+
+In questa sessione è stata presa una decisione architetturale fondamentale: abbandonare completamente l'idea di sviluppare un framework RAG e ripartire da zero progettando un sistema che adotti nativamente la filosofia WikiLLM.
+
+L'obiettivo del progetto non è più quello di recuperare porzioni di testo tramite un vector database, ma quello di costruire una vera base di conoscenza strutturata, capace di comprendere i documenti, estrarne concetti e relazioni, organizzare automaticamente una wiki e consentire un reasoning locale tramite LLM.
+
+La conseguenza è stata la scelta di creare un nuovo progetto, anziché modificare quello esistente.
+
+Nuovo progetto
+
+È stato creato un nuovo repository Git dedicato al progetto.
+
+La struttura iniziale del repository è stata impostata come un package Python, pensato per diventare un motore indipendente dall'interfaccia grafica.
+
+L'idea è che in futuro il progetto sarà composto da due elementi distinti:
+
+KnowledgeEngine
+contiene tutta la logica AI
+parser
+knowledge graph
+wiki
+reasoning
+LLM
+una futura applicazione GUI (desktop o altro)
+utilizzerà KnowledgeEngine come libreria
+non conterrà logica AI
+
+Questo permette di mantenere il motore completamente indipendente dalla user experience.
+
+Struttura del progetto
+
+Attualmente il progetto è organizzato come segue:
+
+KnowledgeEngine/
+│
+├── knowledge_engine/
+│   ├── __init__.py
+│   ├── main.py
+│   │
+│   ├── domain/
+│   │   ├── __init__.py
+│   │   ├── block.py
+│   │   ├── section.py
+│   │   ├── document.py
+│   │   ├── entity.py
+│   │   ├── relation.py
+│   │   └── knowledge_base.py
+│   │
+│   ├── pipeline/
+│   │   ├── __init__.py
+│   │   ├── pipeline.py
+│   │   └── pipeline_component.py
+│   │
+│   ├── loaders/
+│   ├── parsers/
+│   ├── semantic/
+│   ├── graph/
+│   ├── wiki/
+│   ├── reasoning/
+│   ├── storage/
+│   ├── llm/
+│   └── utils/
+│
+├── tests/
+│
+├── README.md
+├── requirements.txt
+└── .gitignore
+
+Durante la sessione è stato deciso di abbandonare definitivamente la cartella core, sostituendola con domain, molto più rappresentativa della filosofia del progetto.
+
+Filosofia architetturale
+
+La decisione più importante riguarda il modo in cui il sistema rappresenta la conoscenza.
+
+Nel progetto precedente il modello era:
+
+Documento
+
+↓
+
+Chunk
+
+↓
+
+Embedding
+
+↓
+
+Vector Store
+
+↓
+
+LLM
+
+Nel nuovo progetto la filosofia diventa:
+
+Documento
+
+↓
+
+Conoscenza
+
+↓
+
+Entità
+
+↓
+
+Relazioni
+
+↓
+
+Knowledge Base
+
+↓
+
+Wiki
+
+↓
+
+Reasoning
+
+Il retrieval non rappresenta più il cuore del sistema.
+
+L'intero progetto ruota invece intorno alla KnowledgeBase.
+
+Pipeline
+
+È stata implementata una pipeline completamente indipendente dal dominio.
+
+La pipeline non conosce:
+
+Document
+Entity
+Relation
+LLM
+
+Lavora solamente con il concetto di trasformazione:
+
+Input
+
+↓
+
+PipelineComponent
+
+↓
+
+Output
+
+La pipeline attuale espone:
+
+add_component(...)
+run(...)
+clear()
+
+Ogni componente implementa:
+
+process(data)
+
+La pipeline è stata mantenuta volutamente sincrona.
+
+L'eventuale supporto ad async verrà valutato solo quando emergerà una reale necessità.
+
+Dominio
+
+È stata presa una decisione molto importante.
+
+Gli oggetti del dominio:
+
+rappresentano solamente dati
+non contengono logica AI
+sono immutabili
+
+Per questo motivo tutte le classi del dominio utilizzeranno:
+
+@dataclass(frozen=True, slots=True)
+
+La logica sarà demandata ai servizi.
+
+Block
+
+È stato implementato il primo vero oggetto del dominio.
+
+Block rappresenta la più piccola unità semantica di un documento.
+
+Non rappresenta un chunk.
+
+Può rappresentare:
+
+testo
+heading
+lista
+tabella
+immagine
+codice
+nota
+warning
+citazione
+
+È stato introdotto:
+
+BlockType
+
+tramite Enum.
+
+Gli identificatori vengono generati automaticamente.
+
+Identificatori
+
+È stato deciso di utilizzare:
+
+UUID v4
+
+come identificatore di tutti gli oggetti del dominio.
+
+È stata creata l'utility:
+
+generate_id()
+
+che astrae completamente la generazione degli ID.
+
+Questo permetterà in futuro di sostituire UUID con altre strategie senza modificare il resto del codice.
+
+Section
+
+È stata implementata la seconda classe del dominio.
+
+Una Section rappresenta una porzione logica del documento.
+
+Contiene:
+
+titolo
+tipo
+Block
+sotto-sezioni
+
+Le sezioni sono state modellate come struttura ad albero.
+
+Ad esempio:
+
+Installazione
+
+    Alimentazione
+
+    Cablaggio
+
+        Sensori
+
+        Sirena
+
+Le collezioni sono state implementate come tuple per mantenere la completa immutabilità.
+
+Testing
+
+È stato introdotto un principio che accompagnerà tutto il progetto.
+
+Ogni nuova funzionalità dovrà seguire questo ciclo:
+
+Creazione file
+
+↓
+
+Implementazione
+
+↓
+
+Test tramite main.py
+
+↓
+
+Commit Git
+
+main.py diventa quindi il punto di ingresso utilizzato durante tutto lo sviluppo.
+
+I test effettuati finora hanno verificato:
+
+package Python
+import
+pipeline
+Block
+Section
+generazione automatica UUID
+
+Tutto funziona correttamente.
+
+Principi architetturali decisi
+
+Durante la sessione sono stati definiti alcuni principi che guideranno tutto il progetto.
+
+Separazione dominio / AI
+
+Il dominio descrive solamente il mondo.
+
+L'AI descrive come utilizzare quel mondo.
+
+Nessuna dipendenza tecnologica
+
+Il dominio non deve conoscere:
+
+Ollama
+Embedding
+FAISS
+Chunk
+Vector Store
+
+Queste saranno responsabilità dei moduli AI.
+
+Immutabilità
+
+Gli oggetti del dominio non vengono modificati.
+
+Ogni trasformazione produce nuovi oggetti.
+
+Una responsabilità per classe
+
+Ogni classe dovrà rappresentare un solo concetto.
+
+Motore indipendente
+
+KnowledgeEngine deve poter funzionare:
+
+senza GUI
+senza server
+senza API
+
+Qualsiasi interfaccia futura dovrà utilizzare il motore come libreria.
+
+Roadmap aggiornata
+
+La roadmap è stata completamente ripensata.
+
+L'ordine previsto è ora il seguente.
+
+FASE 1
+
+Fondamenta
+
+struttura progetto
+package
+pipeline
+dominio
+FASE 2
+
+Completamento del modello del dominio
+
+Implementare:
+
+Document
+Entity
+Relation
+KnowledgeBase
+FASE 3
+
+Origine della conoscenza
+
+Prima di implementare Document, valutare l'introduzione di un nuovo oggetto:
+
+DocumentSource
+
+(o Source)
+
+che rappresenterà l'origine della conoscenza.
+
+L'idea nasce dalla constatazione che un documento può provenire da:
+
+PDF
+DOCX
+Email
+HTML
+Markdown
+OCR
+Database
+
+La sorgente viene quindi considerata parte del dominio e non dell'infrastruttura.
+
+FASE 4
+
+Parsing
+
+Realizzazione dei parser per ottenere uno Structured Document anziché semplice testo.
+
+FASE 5
+
+Semantic Classification
+
+Classificazione automatica delle sezioni.
+
+FASE 6
+
+Knowledge Extraction
+
+Estrazione di:
+
+Entity
+Relation
+FASE 7
+
+Knowledge Builder
+
+Costruzione incrementale della KnowledgeBase.
+
+FASE 8
+
+Wiki Builder
+
+Generazione automatica delle pagine della wiki.
+
+FASE 9
+
+Graph Builder
+
+Costruzione del grafo della conoscenza.
+
+FASE 10
+
+Reasoning Engine
+
+Introduzione del modello LLM per interrogare la KnowledgeBase.
+
+Solo in una fase successiva verrà eventualmente valutata l'introduzione di tecniche di retrieval (embedding, ricerca vettoriale, ecc.) come ottimizzazione e non come fondamento dell'architettura.
+
+Questa sessione ha quindi sancito il passaggio definitivo da un framework orientato al retrieval a un Knowledge Engine progettato fin dall'inizio per costruire, rappresentare e interrogare conoscenza strutturata in locale, seguendo la filosofia di una WikiLLM.
