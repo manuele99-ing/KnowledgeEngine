@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum, auto
 
-from knowledge_engine.domain.block import Block
+from knowledge_engine.domain.document.block import Block
 from knowledge_engine.utils.id_generator import generate_id
 
 

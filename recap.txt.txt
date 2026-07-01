@@ -1,113 +1,49 @@
-KnowledgeEngine – Riassunto della progettazione (Sessione 1)
+KnowledgeEngine – Stato del progetto (Sessione 2)
+Visione del progetto
 
-In questa sessione è stata presa una decisione architetturale fondamentale: abbandonare completamente l'idea di sviluppare un framework RAG e ripartire da zero progettando un sistema che adotti nativamente la filosofia WikiLLM.
+L'obiettivo non è costruire un classico framework RAG, ma un Knowledge Engine ispirato alla filosofia WikiLLM.
 
-L'obiettivo del progetto non è più quello di recuperare porzioni di testo tramite un vector database, ma quello di costruire una vera base di conoscenza strutturata, capace di comprendere i documenti, estrarne concetti e relazioni, organizzare automaticamente una wiki e consentire un reasoning locale tramite LLM.
+L'idea è che il sistema non debba limitarsi a recuperare chunk tramite embedding, ma debba:
 
-La conseguenza è stata la scelta di creare un nuovo progetto, anziché modificare quello esistente.
+leggere documenti eterogenei;
+comprenderne la struttura;
+estrarre conoscenza;
+costruire una Knowledge Base;
+generare automaticamente una wiki navigabile;
+costruire un grafo della conoscenza;
+permettere reasoning locale tramite LLM.
 
-Nuovo progetto
+L'intero motore dovrà funzionare completamente in locale, così da poter elaborare documentazione riservata (manuali tecnici, procedure aziendali, documenti interni, contratti, ecc.) senza inviare dati a servizi cloud.
 
-È stato creato un nuovo repository Git dedicato al progetto.
-
-La struttura iniziale del repository è stata impostata come un package Python, pensato per diventare un motore indipendente dall'interfaccia grafica.
-
-L'idea è che in futuro il progetto sarà composto da due elementi distinti:
-
-KnowledgeEngine
-contiene tutta la logica AI
-parser
-knowledge graph
-wiki
-reasoning
-LLM
-una futura applicazione GUI (desktop o altro)
-utilizzerà KnowledgeEngine come libreria
-non conterrà logica AI
-
-Questo permette di mantenere il motore completamente indipendente dalla user experience.
-
-Struttura del progetto
-
-Attualmente il progetto è organizzato come segue:
-
-KnowledgeEngine/
-│
-├── knowledge_engine/
-│   ├── __init__.py
-│   ├── main.py
-│   │
-│   ├── domain/
-│   │   ├── __init__.py
-│   │   ├── block.py
-│   │   ├── section.py
-│   │   ├── document.py
-│   │   ├── entity.py
-│   │   ├── relation.py
-│   │   └── knowledge_base.py
-│   │
-│   ├── pipeline/
-│   │   ├── __init__.py
-│   │   ├── pipeline.py
-│   │   └── pipeline_component.py
-│   │
-│   ├── loaders/
-│   ├── parsers/
-│   ├── semantic/
-│   ├── graph/
-│   ├── wiki/
-│   ├── reasoning/
-│   ├── storage/
-│   ├── llm/
-│   └── utils/
-│
-├── tests/
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
-
-Durante la sessione è stato deciso di abbandonare definitivamente la cartella core, sostituendola con domain, molto più rappresentativa della filosofia del progetto.
+In futuro il motore potrà utilizzare modelli locali (ad esempio tramite Ollama o altri runtime), ma il dominio e l'architettura rimarranno completamente indipendenti dal modello utilizzato.
 
 Filosofia architetturale
 
-La decisione più importante riguarda il modo in cui il sistema rappresenta la conoscenza.
+Abbiamo scelto una netta separazione tra:
 
-Nel progetto precedente il modello era:
+dominio;
+pipeline;
+parsing;
+AI.
 
-Documento
+Il dominio non conosce:
 
-↓
+LLM;
+embedding;
+vector store;
+FAISS;
+Chroma;
+Ollama.
 
-Chunk
+Queste saranno responsabilità di moduli separati.
 
-↓
-
-Embedding
-
-↓
-
-Vector Store
-
-↓
-
-LLM
-
-Nel nuovo progetto la filosofia diventa:
+L'architettura è pensata secondo il principio:
 
 Documento
 
 ↓
 
 Conoscenza
-
-↓
-
-Entità
-
-↓
-
-Relazioni
 
 ↓
 
@@ -121,24 +57,184 @@ Wiki
 
 Reasoning
 
-Il retrieval non rappresenta più il cuore del sistema.
+e non
 
-L'intero progetto ruota invece intorno alla KnowledgeBase.
+Documento
+
+↓
+
+Chunk
+
+↓
+
+Embedding
+
+↓
+
+Vector Search
+
+↓
+
+LLM
+
+Il retrieval, se verrà introdotto, sarà soltanto un'ottimizzazione futura.
+
+Struttura attuale
+knowledge_engine/
+
+    domain/
+
+        document/
+        knowledge/
+
+    pipeline/
+
+    loaders/
+
+    parsers/
+        components/
+
+    semantic/
+    graph/
+    wiki/
+    reasoning/
+    storage/
+    llm/
+Dominio
+
+Il dominio rappresenta esclusivamente dati.
+
+Tutte le classi sono:
+
+immutable (frozen=True);
+ottimizzate (slots=True);
+prive di logica AI.
+document/
+Block
+
+Rappresenta l'unità semantica minima.
+
+Può rappresentare:
+
+testo;
+heading;
+lista;
+tabella;
+codice;
+immagine;
+warning;
+nota.
+Section
+
+Rappresenta una sezione logica.
+
+Contiene:
+
+titolo;
+tipo;
+blocchi;
+sottosezioni.
+
+È modellata come un albero.
+
+DocumentSource
+
+Descrive l'origine del documento.
+
+Non rappresenta il file.
+
+Può rappresentare:
+
+PDF;
+DOCX;
+HTML;
+Markdown;
+Database;
+Email;
+OCR;
+testo.
+
+Contiene:
+
+tipo;
+nome;
+URI;
+metadata.
+RawDocument
+
+Rappresenta un documento appena letto.
+
+Contiene:
+
+sorgente;
+contenuto testuale;
+metadata.
+
+Non è ancora stato interpretato.
+
+È il risultato dei loader.
+
+Document
+
+Rappresenta il documento strutturato.
+
+Contiene:
+
+sorgente;
+titolo;
+sezioni;
+metadata.
+
+È il risultato del parser.
+
+knowledge/
+Entity
+
+Rappresenta un concetto estratto.
+
+Esempi:
+
+Hub 2
+MotionProtect
+Ajax
+Jeweller
+Centrale
+Relation
+
+Collega due entità.
+
+Esempi:
+
+MotionProtect
+
+CONNECTED_TO
+
+Hub 2
+
+oppure
+
+Hub 2
+
+USES
+
+Jeweller
+KnowledgeBase
+
+Rappresenta tutta la conoscenza estratta.
+
+Contiene:
+
+documenti;
+entità;
+relazioni.
+
+Diventerà il cuore dell'intero sistema.
 
 Pipeline
 
-È stata implementata una pipeline completamente indipendente dal dominio.
+Abbiamo costruito una pipeline completamente generica.
 
-La pipeline non conosce:
-
-Document
-Entity
-Relation
-LLM
-
-Lavora solamente con il concetto di trasformazione:
-
-Input
+Pipeline
 
 ↓
 
@@ -146,278 +242,175 @@ PipelineComponent
 
 ↓
 
-Output
-
-La pipeline attuale espone:
-
-add_component(...)
-run(...)
-clear()
-
-Ogni componente implementa:
-
 process(data)
 
-La pipeline è stata mantenuta volutamente sincrona.
+Non conosce nessun oggetto del dominio.
 
-L'eventuale supporto ad async verrà valutato solo quando emergerà una reale necessità.
+Può essere riutilizzata ovunque.
 
-Dominio
+Loaders
 
-È stata presa una decisione molto importante.
+È stata introdotta l'interfaccia:
 
-Gli oggetti del dominio:
+DocumentLoader
 
-rappresentano solamente dati
-non contengono logica AI
-sono immutabili
-
-Per questo motivo tutte le classi del dominio utilizzeranno:
-
-@dataclass(frozen=True, slots=True)
-
-La logica sarà demandata ai servizi.
-
-Block
-
-È stato implementato il primo vero oggetto del dominio.
-
-Block rappresenta la più piccola unità semantica di un documento.
-
-Non rappresenta un chunk.
-
-Può rappresentare:
-
-testo
-heading
-lista
-tabella
-immagine
-codice
-nota
-warning
-citazione
-
-È stato introdotto:
-
-BlockType
-
-tramite Enum.
-
-Gli identificatori vengono generati automaticamente.
-
-Identificatori
-
-È stato deciso di utilizzare:
-
-UUID v4
-
-come identificatore di tutti gli oggetti del dominio.
-
-È stata creata l'utility:
-
-generate_id()
-
-che astrae completamente la generazione degli ID.
-
-Questo permetterà in futuro di sostituire UUID con altre strategie senza modificare il resto del codice.
-
-Section
-
-È stata implementata la seconda classe del dominio.
-
-Una Section rappresenta una porzione logica del documento.
-
-Contiene:
-
-titolo
-tipo
-Block
-sotto-sezioni
-
-Le sezioni sono state modellate come struttura ad albero.
-
-Ad esempio:
-
-Installazione
-
-    Alimentazione
-
-    Cablaggio
-
-        Sensori
-
-        Sirena
-
-Le collezioni sono state implementate come tuple per mantenere la completa immutabilità.
-
-Testing
-
-È stato introdotto un principio che accompagnerà tutto il progetto.
-
-Ogni nuova funzionalità dovrà seguire questo ciclo:
-
-Creazione file
-
-↓
-
-Implementazione
-
-↓
-
-Test tramite main.py
-
-↓
-
-Commit Git
-
-main.py diventa quindi il punto di ingresso utilizzato durante tutto lo sviluppo.
-
-I test effettuati finora hanno verificato:
-
-package Python
-import
-pipeline
-Block
-Section
-generazione automatica UUID
-
-Tutto funziona correttamente.
-
-Principi architetturali decisi
-
-Durante la sessione sono stati definiti alcuni principi che guideranno tutto il progetto.
-
-Separazione dominio / AI
-
-Il dominio descrive solamente il mondo.
-
-L'AI descrive come utilizzare quel mondo.
-
-Nessuna dipendenza tecnologica
-
-Il dominio non deve conoscere:
-
-Ollama
-Embedding
-FAISS
-Chunk
-Vector Store
-
-Queste saranno responsabilità dei moduli AI.
-
-Immutabilità
-
-Gli oggetti del dominio non vengono modificati.
-
-Ogni trasformazione produce nuovi oggetti.
-
-Una responsabilità per classe
-
-Ogni classe dovrà rappresentare un solo concetto.
-
-Motore indipendente
-
-KnowledgeEngine deve poter funzionare:
-
-senza GUI
-senza server
-senza API
-
-Qualsiasi interfaccia futura dovrà utilizzare il motore come libreria.
-
-Roadmap aggiornata
-
-La roadmap è stata completamente ripensata.
-
-L'ordine previsto è ora il seguente.
-
-FASE 1
-
-Fondamenta
-
-struttura progetto
-package
-pipeline
-dominio
-FASE 2
-
-Completamento del modello del dominio
-
-Implementare:
-
-Document
-Entity
-Relation
-KnowledgeBase
-FASE 3
-
-Origine della conoscenza
-
-Prima di implementare Document, valutare l'introduzione di un nuovo oggetto:
+Ogni loader ha una sola responsabilità:
 
 DocumentSource
 
-(o Source)
+↓
 
-che rappresenterà l'origine della conoscenza.
+RawDocument
 
-L'idea nasce dalla constatazione che un documento può provenire da:
+Attualmente è stato implementato:
 
-PDF
-DOCX
-Email
-HTML
-Markdown
-OCR
-Database
+TextLoader
 
-La sorgente viene quindi considerata parte del dominio e non dell'infrastruttura.
+che legge un file .txt.
 
-FASE 4
+Parsers
 
-Parsing
+Abbiamo deciso di separare completamente:
 
-Realizzazione dei parser per ottenere uno Structured Document anziché semplice testo.
+lettura
 
-FASE 5
+da
 
-Semantic Classification
+parsing.
 
-Classificazione automatica delle sezioni.
+Il parser riceve:
 
-FASE 6
+RawDocument
 
-Knowledge Extraction
+e produce:
 
-Estrazione di:
+Document
 
-Entity
-Relation
-FASE 7
+Attualmente esiste:
 
-Knowledge Builder
+TextParser
+Parser Components
 
-Costruzione incrementale della KnowledgeBase.
+Abbiamo iniziato a modularizzare il parser.
 
-FASE 8
+Per ora esiste:
 
-Wiki Builder
+NormalizeTextComponent
 
-Generazione automatica delle pagine della wiki.
+che normalizza il testo.
 
-FASE 9
+La differenza importante è che i parser non hanno una loro infrastruttura, ma utilizzano direttamente la Pipeline generica già presente nel progetto.
 
-Graph Builder
+Pipeline attuale
 
-Costruzione del grafo della conoscenza.
+Oggi il flusso è:
 
-FASE 10
+TXT
 
-Reasoning Engine
+↓
 
-Introduzione del modello LLM per interrogare la KnowledgeBase.
+TextLoader
 
-Solo in una fase successiva verrà eventualmente valutata l'introduzione di tecniche di retrieval (embedding, ricerca vettoriale, ecc.) come ottimizzazione e non come fondamento dell'architettura.
+↓
 
-Questa sessione ha quindi sancito il passaggio definitivo da un framework orientato al retrieval a un Knowledge Engine progettato fin dall'inizio per costruire, rappresentare e interrogare conoscenza strutturata in locale, seguendo la filosofia di una WikiLLM.
+RawDocument
+
+↓
+
+Pipeline
+
+↓
+
+NormalizeTextComponent
+
+↓
+
+TextParser
+
+↓
+
+Document
+
+È la prima pipeline end-to-end realmente funzionante.
+
+Decisione architetturale importante
+
+Abbiamo eliminato l'idea di avere:
+
+ParserComponent
+
+perché avrebbe duplicato la pipeline generica.
+
+L'intero motore utilizzerà un solo framework di pipeline.
+
+Prossimi passi
+
+L'obiettivo è rendere TextParser un semplice orchestratore.
+
+Invece di contenere logica, utilizzerà componenti specializzati.
+
+La pipeline diventerà progressivamente:
+
+RawDocument
+
+↓
+
+NormalizeTextComponent
+
+↓
+
+ExtractTitleComponent
+
+↓
+
+SplitParagraphsComponent
+
+↓
+
+DetectHeadingsComponent
+
+↓
+
+BuildSectionsComponent
+
+↓
+
+BuildBlocksComponent
+
+↓
+
+BuildDocumentComponent
+
+↓
+
+Document
+
+A quel punto TextParser conterrà solamente poche righe di codice.
+
+Roadmap
+
+Terminata la modularizzazione del parser inizieranno i moduli realmente "intelligenti".
+
+L'ordine previsto è:
+
+completare la pipeline di parsing;
+classificazione semantica delle sezioni;
+estrazione automatica di Entity;
+estrazione automatica di Relation;
+costruzione incrementale della KnowledgeBase;
+generazione automatica della Wiki;
+costruzione del Knowledge Graph;
+introduzione del motore di Reasoning;
+integrazione con un LLM locale;
+eventuale introduzione del retrieval vettoriale come ottimizzazione.
+Obiettivo finale
+
+Alla fine del progetto l'utente dovrà poter inserire centinaia o migliaia di documenti (PDF, DOCX, HTML, Markdown, email, database, OCR, ecc.) e ottenere automaticamente:
+
+una rappresentazione strutturata dei documenti;
+una base di conoscenza coerente;
+una wiki interna navigabile;
+un knowledge graph;
+risposte motivate e verificabili tramite un LLM eseguito completamente in locale.
+
+L'utente non interrogherà più semplicemente un insieme di chunk, ma una Knowledge Base strutturata, in cui ogni risposta potrà essere ricondotta alla fonte originale. Questo rende il progetto adatto ad ambienti professionali e aziendali dove sono fondamentali riservatezza dei dati, tracciabilità delle informazioni e possibilità di verificare ogni affermazione.
