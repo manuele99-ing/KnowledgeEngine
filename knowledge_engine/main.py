@@ -2,10 +2,12 @@ from knowledge_engine.chat.chat_session import ChatSession
 from knowledge_engine.loaders.directory_loader import DirectoryLoader
 from knowledge_engine.parsers.text_parser import TextParser
 from knowledge_engine.reasoning.reasoning_engine import ReasoningEngine
+from knowledge_engine.retrieval.retrieval_engine import RetrievalEngine
 from knowledge_engine.semantic.knowledge_extractor import KnowledgeExtractor
 from knowledge_engine.wiki.markdown_exporter import MarkdownExporter
 from knowledge_engine.wiki.wiki_builder import WikiBuilder
 from knowledge_engine.llm.llm_client_factory import create_llm_client
+
 
 def main() -> None:
 
@@ -52,16 +54,25 @@ def main() -> None:
 
     print("✓ Wiki exported")
 
+    print("\nBuilding retrieval index...")
+
+    retrieval_engine = RetrievalEngine(knowledge_base)
+
+    print("✓ Retrieval index ready")
+
     print("\nInitializing LLM...")
 
     llm_client = create_llm_client()
-    reasoning_engine = ReasoningEngine(llm_client)
+
+    reasoning_engine = ReasoningEngine(
+        llm_client=llm_client,
+        retrieval_engine=retrieval_engine,
+    )
 
     print("✓ LLM ready")
 
     chat = ChatSession(
         reasoning_engine=reasoning_engine,
-        knowledge_base=knowledge_base,
     )
 
     chat.run()
