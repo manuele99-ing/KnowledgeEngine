@@ -1,0 +1,18 @@
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from types import MappingProxyType
+from typing import Any, Mapping
+
+
+@dataclass(frozen=True, slots=True)
+class LLMResponse:
+    """
+    Response returned by an LLM backend.
+    """
+
+    text: str
+
+    metadata: Mapping[str, Any] = field(
+        default_factory=lambda: MappingProxyType({})
+    )

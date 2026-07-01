@@ -1,12 +1,32 @@
 from __future__ import annotations
 
-from knowledge_engine.domain.document.block import Block, BlockType
 from knowledge_engine.domain.document.document import Document
 from knowledge_engine.domain.document.raw_document import RawDocument
-from knowledge_engine.domain.document.section import Section, SectionType
+from knowledge_engine.parsers.components.build_blocks_component import (
+    BuildBlocksComponent,
+)
+from knowledge_engine.parsers.components.build_document_component import (
+    BuildDocumentComponent,
+)
+from knowledge_engine.parsers.components.build_sections_component import (
+    BuildSectionsComponent,
+)
+from knowledge_engine.parsers.components.detect_headings_component import (
+    DetectHeadingsComponent,
+)
+from knowledge_engine.parsers.components.detect_lists_component import (
+    DetectListsComponent,
+)
+from knowledge_engine.parsers.components.extract_title_component import (
+    ExtractTitleComponent,
+)
 from knowledge_engine.parsers.components.normalize_text_component import (
     NormalizeTextComponent,
 )
+from knowledge_engine.parsers.components.split_paragraphs_component import (
+    SplitParagraphsComponent,
+)
+from knowledge_engine.parsers.context.parse_context import ParseContext
 from knowledge_engine.parsers.document_parser import DocumentParser
 from knowledge_engine.pipeline.pipeline import Pipeline
 
@@ -20,37 +40,21 @@ class TextParser(DocumentParser):
 
         self._pipeline = Pipeline()
 
-        self._pipeline.add_component(
-            NormalizeTextComponent()
-        )
+        self._pipeline.add_component(NormalizeTextComponent())
+        self._pipeline.add_component(ExtractTitleComponent())
+        self._pipeline.add_component(SplitParagraphsComponent())
+        self._pipeline.add_component(DetectHeadingsComponent())
+        self._pipeline.add_component(DetectListsComponent())
+        self._pipeline.add_component(BuildBlocksComponent())
+        self._pipeline.add_component(BuildSectionsComponent())
+        self._pipeline.add_component(BuildDocumentComponent())
 
     def parse(self, raw_document: RawDocument) -> Document:
 
-        raw_document = self._pipeline.run(raw_document)
+        context = ParseContext(raw_document=raw_document)
+        context = self._pipeline.run(context)
 
-        lines = [
-            line
-            for line in raw_document.content.splitlines()
-            if line.strip()
-        ]
+        if context.document is None:
+            raise ValueError("Text parsing pipeline did not build a document.")
 
-        title = lines[0] if lines else "Untitled"
-
-        body = "\n".join(lines[1:])
-
-        block = Block(
-            type=BlockType.TEXT,
-            content=body,
-        )
-
-        section = Section(
-            title="Content",
-            type=SectionType.CHAPTER,
-            blocks=(block,),
-        )
-
-        return Document(
-            source=raw_document.source,
-            title=title,
-            sections=(section,),
-        )
+        return context.document
