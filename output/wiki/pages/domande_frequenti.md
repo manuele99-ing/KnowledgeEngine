@@ -1,0 +1,12 @@
+# Domande frequenti
+
+## Content
+
+Il dispositivo non si accende.
+Verificare l'alimentatore.
+Verificare il fusibile.
+Riprovare.
+---
+Non riesco ad accedere.
+Controllare che il PC sia nella stessa rete.
+Verificare username e password.

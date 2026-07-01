@@ -1,25 +1,19 @@
-from __future__ import annotations
-
-import os
-
+from knowledge_engine.config.settings import (
+    OLLAMA_BASE_URL,
+    OLLAMA_MODEL,
+    OLLAMA_TIMEOUT_SECONDS,
+)
 from knowledge_engine.llm.llm_client import LLMClient
 from knowledge_engine.llm.ollama_llm_client import OllamaLLMClient
-from knowledge_engine.llm.static_llm_client import StaticLLMClient
 
 
-def create_llm_client_from_env() -> LLMClient:
+def create_llm_client() -> LLMClient:
     """
-    Creates an LLM client from environment configuration.
+    Creates the default LLM client.
     """
 
-    provider = os.getenv("KNOWLEDGE_ENGINE_LLM", "static").casefold()
-
-    if provider == "ollama":
-        return OllamaLLMClient(
-            model=os.getenv("OLLAMA_MODEL", "qwen2.5:1.5b"),
-            base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
-        )
-
-    return StaticLLMClient(
-        response_text="This is a placeholder answer from the test LLM."
+    return OllamaLLMClient(
+        model=OLLAMA_MODEL,
+        base_url=OLLAMA_BASE_URL,
+        timeout_seconds=OLLAMA_TIMEOUT_SECONDS,
     )

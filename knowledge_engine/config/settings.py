@@ -1,0 +1,9 @@
+INPUT_DIRECTORY = "input"
+
+WIKI_OUTPUT_DIRECTORY = "output/wiki"
+
+OLLAMA_BASE_URL = "http://localhost:11434"
+
+OLLAMA_MODEL = "qwen2.5:1.5b"
+
+OLLAMA_TIMEOUT_SECONDS = 120.0

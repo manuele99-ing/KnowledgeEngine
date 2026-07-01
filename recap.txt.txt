@@ -1,53 +1,31 @@
-KnowledgeEngine – Stato del progetto (Sessione 2)
+KnowledgeEngine — Stato del progetto (Sessione 3)
 Visione del progetto
 
-L'obiettivo non è costruire un classico framework RAG, ma un Knowledge Engine ispirato alla filosofia WikiLLM.
+KnowledgeEngine non è un framework RAG, ma un motore documentale locale ispirato alla filosofia WikiLLM.
 
-L'idea è che il sistema non debba limitarsi a recuperare chunk tramite embedding, ma debba:
+L'obiettivo è permettere ad un utente di inserire una cartella contenente documentazione aziendale (manuali, procedure, documentazione tecnica, ecc.) ed ottenere automaticamente:
 
-leggere documenti eterogenei;
-comprenderne la struttura;
-estrarre conoscenza;
-costruire una Knowledge Base;
-generare automaticamente una wiki navigabile;
-costruire un grafo della conoscenza;
-permettere reasoning locale tramite LLM.
+documenti strutturati;
+una Knowledge Base;
+una Wiki navigabile;
+(in futuro) un Knowledge Graph;
+risposte tramite un LLM locale (Ollama), completamente offline.
 
-L'intero motore dovrà funzionare completamente in locale, così da poter elaborare documentazione riservata (manuali tecnici, procedure aziendali, documenti interni, contratti, ecc.) senza inviare dati a servizi cloud.
-
-In futuro il motore potrà utilizzare modelli locali (ad esempio tramite Ollama o altri runtime), ma il dominio e l'architettura rimarranno completamente indipendenti dal modello utilizzato.
+L'LLM non rappresenta il centro dell'architettura, ma solamente uno dei moduli finali.
 
 Filosofia architetturale
 
-Abbiamo scelto una netta separazione tra:
+Abbiamo mantenuto una netta separazione tra:
 
-dominio;
-pipeline;
-parsing;
-AI.
-
-Il dominio non conosce:
-
-LLM;
-embedding;
-vector store;
-FAISS;
-Chroma;
-Ollama.
-
-Queste saranno responsabilità di moduli separati.
-
-L'architettura è pensata secondo il principio:
-
-Documento
+Loaders
 
 ↓
 
-Conoscenza
+Parsers
 
 ↓
 
-Knowledge Base
+Semantic
 
 ↓
 
@@ -57,360 +35,311 @@ Wiki
 
 Reasoning
 
-e non
-
-Documento
-
-↓
-
-Chunk
-
-↓
-
-Embedding
-
-↓
-
-Vector Search
-
 ↓
 
 LLM
 
-Il retrieval, se verrà introdotto, sarà soltanto un'ottimizzazione futura.
+Il dominio continua a non conoscere:
 
-Struttura attuale
-knowledge_engine/
+Ollama
+Embedding
+Vector Store
+Chroma
+FAISS
 
-    domain/
+L'intero motore rimane completamente indipendente dalla tecnologia utilizzata per il reasoning.
 
-        document/
-        knowledge/
+Stato attuale del progetto
 
-    pipeline/
+Oggi la pipeline completa è:
 
-    loaders/
+input/
 
-    parsers/
-        components/
+↓
 
-    semantic/
-    graph/
-    wiki/
-    reasoning/
-    storage/
-    llm/
-Dominio
+DirectoryLoader
 
-Il dominio rappresenta esclusivamente dati.
+↓
 
-Tutte le classi sono:
+RawDocument[]
 
-immutable (frozen=True);
-ottimizzate (slots=True);
-prive di logica AI.
-document/
-Block
+↓
 
-Rappresenta l'unità semantica minima.
+TextParser
 
-Può rappresentare:
+↓
 
-testo;
-heading;
-lista;
-tabella;
-codice;
-immagine;
-warning;
-nota.
-Section
+Document[]
 
-Rappresenta una sezione logica.
+↓
 
-Contiene:
+KnowledgeExtractor
 
-titolo;
-tipo;
-blocchi;
-sottosezioni.
+↓
 
-È modellata come un albero.
+KnowledgeBase
 
-DocumentSource
+↓
 
-Descrive l'origine del documento.
+WikiBuilder
 
-Non rappresenta il file.
+↓
 
-Può rappresentare:
+Wiki
 
+↓
+
+MarkdownExporter
+
+↓
+
+output/wiki
+
+È la prima pipeline end-to-end realmente funzionante.
+
+Parser
+
+Il parser è stato completamente modularizzato.
+
+Pipeline attuale:
+
+NormalizeText
+
+↓
+
+ExtractTitle
+
+↓
+
+SplitParagraphs
+
+↓
+
+DetectHeadings
+
+↓
+
+DetectLists
+
+↓
+
+BuildBlocks
+
+↓
+
+BuildSections
+
+↓
+
+BuildDocument
+
+Ogni componente ha una responsabilità singola.
+
+Il parser è diventato un semplice orchestratore.
+
+Semantic
+
+È stato introdotto il primo estrattore di conoscenza.
+
+Attualmente è euristico.
+
+Produce automaticamente:
+
+Entity
+Relation
+KnowledgeBase
+
+Senza utilizzare alcun LLM.
+
+Wiki
+
+È stato introdotto il primo modulo Wiki.
+
+Architettura:
+
+KnowledgeBase
+
+↓
+
+WikiBuilder
+
+↓
+
+Wiki
+
+↓
+
+MarkdownExporter
+
+↓
+
+Filesystem
+
+La Wiki è un modello logico.
+
+Non conosce Markdown.
+
+Non conosce HTML.
+
+Non conosce il filesystem.
+
+L'export è responsabilità esclusiva dell'exporter.
+
+LLM
+
+È stato costruito il layer completo.
+
+Comprende:
+
+LLMClient
+LLMRequest
+LLMResponse
+OllamaLLMClient
+StaticLLMClient
+Factory
+
+Il ReasoningEngine utilizza esclusivamente l'interfaccia LLMClient.
+
+Questo rende il motore indipendente da Ollama.
+
+Output attuale
+
+Oggi il progetto è già in grado di:
+
+leggere più documenti TXT;
+effettuarne il parsing;
+costruire una KnowledgeBase;
+generare automaticamente una Wiki Markdown.
+Decisione importante presa
+
+Abbiamo deciso di NON introdurre ancora la classe KnowledgeEngine.
+
+Per ora il main.py continuerà ad essere l'orchestratore della pipeline.
+
+La classe KnowledgeEngine verrà introdotta solo quando il motore avrà uno stato reale (documenti, wiki, grafo, conversazione, cache, ecc.).
+
+Metodo di lavoro deciso
+
+Da questa sessione abbiamo definito un workflow stabile.
+
+Per ogni nuova sezione del progetto procederemo sempre così.
+
+1. Analisi
+
+Prima di scrivere codice ti chiederò sempre se quella parte del progetto è già stata modificata.
+
+Ad esempio:
+
+Hai già modificato i file del modulo Wiki?
+
+oppure
+
+Mandami i file della cartella LLM.
+
+2. Revisione
+
+Analizzerò il codice esistente.
+
+Valuterò:
+
+architettura;
+stile;
+eventuali problemi;
+possibili miglioramenti.
+
+L'obiettivo è estendere il codice, non riscriverlo.
+
+3. Comandi PowerShell
+
+Se servono nuovi file o cartelle ti fornirò sempre:
+
+mkdir ...
+
+ni ...
+
+oppure un comando unico.
+
+4. Implementazione
+
+Non scriverò prompt per Claude.
+
+Scriverò direttamente io il codice.
+
+Un file alla volta.
+
+Per ogni file:
+
+implementazione completa;
+spiegazione delle scelte progettuali;
+motivazione architetturale.
+
+Solo dopo passeremo al file successivo.
+
+5. Revisione
+
+Dopo ogni gruppo di file rivaluteremo l'intera architettura prima di proseguire.
+
+Prossima milestone
+
+L'obiettivo immediato non è migliorare il parser.
+
+Il parser TXT è già sufficiente per costruire il resto del motore.
+
+La prossima demo sarà:
+
+input/
+
+↓
+
+DirectoryLoader
+
+↓
+
+Parser
+
+↓
+
+KnowledgeBase
+
+↓
+
+Wiki
+
+↓
+
+Ollama
+
+↓
+
+Chat locale
+
+L'utente dovrà semplicemente:
+
+copiare i documenti nella cartella input/;
+eseguire:
+python -m knowledge_engine.main
+
+Il programma:
+
+leggerà automaticamente tutti i documenti;
+costruirà la KnowledgeBase;
+genererà la Wiki;
+aprirà una semplice chat testuale.
+
+L'utente potrà quindi porre domande sulla documentazione, sfruttando Ollama in locale, senza dipendenze da servizi cloud.
+
+Roadmap a breve termine
+Rifattorizzare il main.py per lavorare con DirectoryLoader.
+Integrare definitivamente ReasoningEngine con OllamaLLMClient.
+Implementare una semplice chat interattiva da terminale (exit per terminare).
+Migliorare progressivamente la qualità della KnowledgeBase.
+Solo successivamente introdurre:
 PDF;
 DOCX;
 HTML;
 Markdown;
-Database;
-Email;
-OCR;
-testo.
-
-Contiene:
-
-tipo;
-nome;
-URI;
-metadata.
-RawDocument
-
-Rappresenta un documento appena letto.
-
-Contiene:
-
-sorgente;
-contenuto testuale;
-metadata.
-
-Non è ancora stato interpretato.
-
-È il risultato dei loader.
-
-Document
-
-Rappresenta il documento strutturato.
-
-Contiene:
-
-sorgente;
-titolo;
-sezioni;
-metadata.
-
-È il risultato del parser.
-
-knowledge/
-Entity
-
-Rappresenta un concetto estratto.
-
-Esempi:
-
-Hub 2
-MotionProtect
-Ajax
-Jeweller
-Centrale
-Relation
-
-Collega due entità.
-
-Esempi:
-
-MotionProtect
-
-CONNECTED_TO
-
-Hub 2
-
-oppure
-
-Hub 2
-
-USES
-
-Jeweller
-KnowledgeBase
-
-Rappresenta tutta la conoscenza estratta.
-
-Contiene:
-
-documenti;
-entità;
-relazioni.
-
-Diventerà il cuore dell'intero sistema.
-
-Pipeline
-
-Abbiamo costruito una pipeline completamente generica.
-
-Pipeline
-
-↓
-
-PipelineComponent
-
-↓
-
-process(data)
-
-Non conosce nessun oggetto del dominio.
-
-Può essere riutilizzata ovunque.
-
-Loaders
-
-È stata introdotta l'interfaccia:
-
-DocumentLoader
-
-Ogni loader ha una sola responsabilità:
-
-DocumentSource
-
-↓
-
-RawDocument
-
-Attualmente è stato implementato:
-
-TextLoader
-
-che legge un file .txt.
-
-Parsers
-
-Abbiamo deciso di separare completamente:
-
-lettura
-
-da
-
-parsing.
-
-Il parser riceve:
-
-RawDocument
-
-e produce:
-
-Document
-
-Attualmente esiste:
-
-TextParser
-Parser Components
-
-Abbiamo iniziato a modularizzare il parser.
-
-Per ora esiste:
-
-NormalizeTextComponent
-
-che normalizza il testo.
-
-La differenza importante è che i parser non hanno una loro infrastruttura, ma utilizzano direttamente la Pipeline generica già presente nel progetto.
-
-Pipeline attuale
-
-Oggi il flusso è:
-
-TXT
-
-↓
-
-TextLoader
-
-↓
-
-RawDocument
-
-↓
-
-Pipeline
-
-↓
-
-NormalizeTextComponent
-
-↓
-
-TextParser
-
-↓
-
-Document
-
-È la prima pipeline end-to-end realmente funzionante.
-
-Decisione architetturale importante
-
-Abbiamo eliminato l'idea di avere:
-
-ParserComponent
-
-perché avrebbe duplicato la pipeline generica.
-
-L'intero motore utilizzerà un solo framework di pipeline.
-
-Prossimi passi
-
-L'obiettivo è rendere TextParser un semplice orchestratore.
-
-Invece di contenere logica, utilizzerà componenti specializzati.
-
-La pipeline diventerà progressivamente:
-
-RawDocument
-
-↓
-
-NormalizeTextComponent
-
-↓
-
-ExtractTitleComponent
-
-↓
-
-SplitParagraphsComponent
-
-↓
-
-DetectHeadingsComponent
-
-↓
-
-BuildSectionsComponent
-
-↓
-
-BuildBlocksComponent
-
-↓
-
-BuildDocumentComponent
-
-↓
-
-Document
-
-A quel punto TextParser conterrà solamente poche righe di codice.
-
-Roadmap
-
-Terminata la modularizzazione del parser inizieranno i moduli realmente "intelligenti".
-
-L'ordine previsto è:
-
-completare la pipeline di parsing;
-classificazione semantica delle sezioni;
-estrazione automatica di Entity;
-estrazione automatica di Relation;
-costruzione incrementale della KnowledgeBase;
-generazione automatica della Wiki;
-costruzione del Knowledge Graph;
-introduzione del motore di Reasoning;
-integrazione con un LLM locale;
-eventuale introduzione del retrieval vettoriale come ottimizzazione.
-Obiettivo finale
-
-Alla fine del progetto l'utente dovrà poter inserire centinaia o migliaia di documenti (PDF, DOCX, HTML, Markdown, email, database, OCR, ecc.) e ottenere automaticamente:
-
-una rappresentazione strutturata dei documenti;
-una base di conoscenza coerente;
-una wiki interna navigabile;
-un knowledge graph;
-risposte motivate e verificabili tramite un LLM eseguito completamente in locale.
-
-L'utente non interrogherà più semplicemente un insieme di chunk, ma una Knowledge Base strutturata, in cui ogni risposta potrà essere ricondotta alla fonte originale. Questo rende il progetto adatto ad ambienti professionali e aziendali dove sono fondamentali riservatezza dei dati, tracciabilità delle informazioni e possibilità di verificare ogni affermazione.
+Knowledge Graph;
+Reasoning avanzato;
+citazioni e tracciabilità delle fonti.
+
+L'obiettivo rimane invariato: costruire un Knowledge Engine locale, capace di trasformare una collezione di documenti in una base di conoscenza interrogabile, verificabile e completamente offline.
