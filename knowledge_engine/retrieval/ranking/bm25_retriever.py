@@ -3,8 +3,8 @@ from __future__ import annotations
 from rank_bm25 import BM25Okapi
 
 from knowledge_engine.retrieval.indexing.section_index import SectionIndex
-from knowledge_engine.retrieval.retrieved_section import RetrievedSection
 from knowledge_engine.retrieval.nlp.spacy_tokenizer import SpacyTokenizer
+from knowledge_engine.retrieval.retrieval_match import RetrievalMatch
 
 
 class BM25Retriever:
@@ -35,7 +35,7 @@ class BM25Retriever:
         self,
         question: str,
         top_k: int = 5,
-    ) -> list[RetrievedSection]:
+    ) -> tuple[list[RetrievalMatch], list[str]]:
 
         query_tokens = list(
             self._tokenizer.tokenize(question)
@@ -49,18 +49,17 @@ class BM25Retriever:
             reverse=True,
         )
 
-        results: list[RetrievedSection] = []
+        matches: list[RetrievalMatch] = []
 
         for index, score in ranked[:top_k]:
 
-            section = self._section_index.sections[index]
+            indexed_section = self._section_index.sections[index]
 
-            results.append(
-                RetrievedSection(
-                    document=section.document,
-                    section=section.section,
+            matches.append(
+                RetrievalMatch(
+                    section=indexed_section,
                     score=float(score),
                 )
             )
 
-        return results
+        return matches, query_tokens

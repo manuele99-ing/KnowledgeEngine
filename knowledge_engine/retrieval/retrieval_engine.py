@@ -1,25 +1,30 @@
 from __future__ import annotations
 
 from knowledge_engine.domain.knowledge.knowledge_base import KnowledgeBase
+from knowledge_engine.retrieval.config.retrieval_config import RetrievalConfig
+from knowledge_engine.retrieval.debugging.retrieval_debugger import RetrievalDebugger
 from knowledge_engine.retrieval.indexing.section_index import SectionIndex
-from knowledge_engine.retrieval.retrieved_section import RetrievedSection
 from knowledge_engine.retrieval.nlp.spacy_tokenizer import SpacyTokenizer
 from knowledge_engine.retrieval.ranking.bm25_retriever import BM25Retriever
+from knowledge_engine.retrieval.retrieved_section import RetrievedSection
 
 
 class RetrievalEngine:
     """
     High-level interface for document retrieval.
 
-    This class encapsulates the indexing process and the retrieval
-    algorithms used to search the KnowledgeBase.
+    This class coordinates indexing, retrieval and debugging while
+    exposing a simple API to the rest of the application.
     """
 
     def __init__(
         self,
         knowledge_base: KnowledgeBase,
         tokenizer: SpacyTokenizer | None = None,
+        config: RetrievalConfig | None = None,
     ) -> None:
+
+        self._config = config or RetrievalConfig()
 
         tokenizer = tokenizer or SpacyTokenizer()
 
@@ -33,13 +38,43 @@ class RetrievalEngine:
             tokenizer=tokenizer,
         )
 
+        self._debugger = RetrievalDebugger(
+            config=self._config,
+        )
+
     def search(
         self,
         question: str,
-        top_k: int = 5,
+        top_k: int | None = None,
     ) -> list[RetrievedSection]:
 
-        return self._retriever.search(
+        if top_k is None:
+            top_k = self._config.default_top_k
+
+        matches, query_tokens = self._retriever.search(
             question=question,
             top_k=top_k,
         )
+
+        self._debugger.print(
+            question=question,
+            query_tokens=query_tokens,
+            ranked_sections=[
+                (match.section, match.score)
+                for match in matches
+            ],
+        )
+
+        results: list[RetrievedSection] = []
+
+        for match in matches:
+
+            results.append(
+                RetrievedSection(
+                    document=match.section.document,
+                    section=match.section.section,
+                    score=match.score,
+                )
+            )
+
+        return results

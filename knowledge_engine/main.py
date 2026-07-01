@@ -2,6 +2,7 @@ from knowledge_engine.chat.chat_session import ChatSession
 from knowledge_engine.loaders.directory_loader import DirectoryLoader
 from knowledge_engine.parsers.text_parser import TextParser
 from knowledge_engine.reasoning.reasoning_engine import ReasoningEngine
+from knowledge_engine.retrieval.config.retrieval_config import RetrievalConfig
 from knowledge_engine.retrieval.retrieval_engine import RetrievalEngine
 from knowledge_engine.semantic.knowledge_extractor import KnowledgeExtractor
 from knowledge_engine.wiki.markdown_exporter import MarkdownExporter
@@ -56,7 +57,14 @@ def main() -> None:
 
     print("\nBuilding retrieval index...")
 
-    retrieval_engine = RetrievalEngine(knowledge_base)
+    retrieval_config = RetrievalConfig(
+        debug_enabled=True,
+    )
+
+    retrieval_engine = RetrievalEngine(
+        knowledge_base=knowledge_base,
+        config=retrieval_config,
+    )
 
     print("✓ Retrieval index ready")
 
