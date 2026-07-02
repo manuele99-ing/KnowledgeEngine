@@ -32,7 +32,7 @@ class ReasoningEngineTest(unittest.TestCase):
 
         prompt = llm_client.requests[0].prompt
 
-        self.assertIn("Knowledge base context:", prompt)
+        self.assertIn("Contesto:", prompt)
         self.assertIn("Ajax Hub 2", prompt)
         self.assertIn("Hub 2", prompt)
         self.assertIn("Jeweller", prompt)

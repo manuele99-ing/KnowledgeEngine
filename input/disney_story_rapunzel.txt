@@ -1,0 +1,16 @@
+RAPUNZEL
+
+Incantesimo
+Nel castello viveva una principessa dai lunghi capelli.
+
+Avvertimento:
+Non salire sulla torre.
+
+1) Attenzione
+2) Cura
+- Mantieni la finestra chiusa
+- Non parlare con la strega
+
+## Fuga
+Rapunzel decide di fuggire la notte.
+Il sole sorge all'orizzonte.

@@ -13,4 +13,10 @@ class RetrievalConfig:
 
     preview_length: int = 180
 
-    default_top_k: int = 5
+    default_top_k: int = 3
+
+    bm25_k1: float = 1.5
+
+    bm25_b: float = 0.0
+
+    semantic_weight: float = 0.5

@@ -84,6 +84,48 @@ class TextParserTest(unittest.TestCase):
             "Aprire l'app Ajax.",
         )
 
+    def test_parse_builds_nested_sections_from_numbered_headings(self) -> None:
+        source = DocumentSource(
+            type=SourceType.TEXT,
+            name="manuale.txt",
+            uri="test_data/manuale.txt",
+        )
+        raw_document = RawDocument(
+            source=source,
+            content=(
+                "Manuale Hub 2\n\n"
+                "1. Installazione\n\n"
+                "1.1 Requisiti\n\n"
+                "- Hub 2 acceso\n"
+                "- Connessione Internet\n\n"
+                "1.2 Procedura\n\n"
+                "1.2.1 Verifica\n\n"
+                "Collegare il dispositivo alla corrente.\n\n"
+                "2. Configurazione\n\n"
+                "Aprire l'app Ajax."
+            ),
+        )
+
+        document = TextParser().parse(raw_document)
+
+        self.assertEqual(len(document.sections), 2)
+
+        installation = document.sections[0]
+        self.assertEqual(installation.title, "Installazione")
+        self.assertEqual(len(installation.children), 2)
+        self.assertEqual(installation.children[0].title, "Requisiti")
+        self.assertEqual(installation.children[1].title, "Procedura")
+        self.assertEqual(len(installation.children[1].children), 1)
+        self.assertEqual(installation.children[1].children[0].title, "Verifica")
+        self.assertEqual(
+            installation.children[0].blocks[0].type,
+            BlockType.LIST,
+        )
+        self.assertEqual(
+            installation.children[1].children[0].blocks[0].content,
+            "Collegare il dispositivo alla corrente.",
+        )
+
     def test_parse_detects_list_blocks(self) -> None:
         source = DocumentSource(
             type=SourceType.TEXT,

@@ -6,13 +6,19 @@ import spacy
 class SpacyTokenizer:
     """
     Tokenizes and lemmatizes text using spaCy.
+
+    The default model is `it_core_news_md` so that vector-based
+    semantic features are available for future expansion.
     """
 
     def __init__(
         self,
-        model: str = "it_core_news_sm",
+        model: str = "it_core_news_md",
     ) -> None:
-        self._nlp = spacy.load(model)
+        try:
+            self._nlp = spacy.load(model)
+        except OSError:
+            self._nlp = spacy.load("it_core_news_sm")
 
     def tokenize(
         self,
@@ -42,3 +48,19 @@ class SpacyTokenizer:
             tokens.append(lemma)
 
         return tuple(tokens)
+
+    def vector(
+        self,
+        text: str,
+    ) -> tuple[float, ...]:
+
+        doc = self._nlp(text)
+
+        if not doc.has_vector:
+            return ()
+
+        return tuple(float(value) for value in doc.vector)
+
+    @property
+    def has_vectors(self) -> bool:
+        return self._nlp.vocab.vectors_length > 0

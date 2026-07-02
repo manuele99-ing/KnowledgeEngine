@@ -9,6 +9,20 @@ from knowledge_engine.domain.document.raw_document import RawDocument
 from knowledge_engine.domain.document.section import Section
 
 
+@dataclass(frozen=True, slots=True)
+class Paragraph:
+    text: str
+    original_lines: tuple[str, ...]
+    start_line: int
+    end_line: int
+    indentation: int
+    blank_lines_before: int
+    blank_lines_after: int
+    heading_level: int | None = None
+    heading_style: str | None = None
+    is_heading: bool = False
+
+
 @dataclass(slots=True)
 class ParseContext:
     """
@@ -29,9 +43,11 @@ class ParseContext:
 
     body_text: str = ""
 
-    paragraphs: list[str] = field(default_factory=list)
+    paragraphs: list[Paragraph] = field(default_factory=list)
 
     heading_indexes: set[int] = field(default_factory=set)
+
+    heading_levels: dict[int, int] = field(default_factory=dict)
 
     list_indexes: set[int] = field(default_factory=set)
 

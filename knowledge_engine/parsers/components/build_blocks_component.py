@@ -14,6 +14,8 @@ class BuildBlocksComponent(PipelineComponent):
 
     _ordered_item_pattern = re.compile(r"^\d+[\.)]\s+")
     _unordered_markers = ("- ", "* ", "+ ")
+    _numeric_heading_pattern = re.compile(r"^\d+(?:\.\d+)*(?:[\.)])?\s+")
+    _markdown_heading_pattern = re.compile(r"^#{1,6}\s*")
 
     def process(self, data: ParseContext) -> ParseContext:
         data.blocks = [
@@ -39,20 +41,26 @@ class BuildBlocksComponent(PipelineComponent):
         self,
         data: ParseContext,
         index: int,
-        paragraph: str,
+        paragraph,
     ) -> str:
-        if index not in data.heading_indexes:
-            if index in data.list_indexes:
-                return self._clean_list(paragraph)
+        if index in data.heading_indexes:
+            if paragraph.heading_style == "markdown":
+                return self._markdown_heading_pattern.sub("", paragraph.text).strip()
 
-            return paragraph
+            if paragraph.heading_style == "numeric":
+                return self._numeric_heading_pattern.sub("", paragraph.text).strip()
 
-        return paragraph.lstrip("#").strip()
+            return paragraph.text.strip()
 
-    def _clean_list(self, paragraph: str) -> str:
+        if index in data.list_indexes:
+            return self._clean_list(paragraph.original_lines)
+
+        return paragraph.text
+
+    def _clean_list(self, original_lines: tuple[str, ...]) -> str:
         items = [
             self._clean_list_item(line.strip())
-            for line in paragraph.splitlines()
+            for line in original_lines
             if line.strip()
         ]
 

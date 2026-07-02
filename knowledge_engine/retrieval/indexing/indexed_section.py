@@ -19,3 +19,7 @@ class IndexedSection:
     text: str
 
     tokens: tuple[str, ...]
+
+    path: tuple[str, ...] = ()
+
+    vector: tuple[float, ...] = ()

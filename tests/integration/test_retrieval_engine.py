@@ -11,39 +11,27 @@ from knowledge_engine.retrieval.retrieval_engine import RetrievalEngine
 TEST_CASES = [
 
     (
-        "Come si installa il dispositivo?",
-        "installazione.txt.txt",
-        "Requisiti",
+        "Chi fa parte della ciurma?",
+        "disney_story_pirates.txt",
+        "La ciurma",
     ),
 
     (
-        "Come collego il dispositivo?",
-        "installazione.txt.txt",
-        "Collegamento",
+        "Cosa succede nella scena finale?",
+        "disney_story_frozen.txt",
+        "Scena finale",
     ),
 
     (
-        "Come verifico il dispositivo?",
-        "installazione.txt.txt",
-        "Verifica",
+        "Dove trova la mappa Topolino?",
+        "disney_story_mickey.txt",
+        "Missione",
     ),
 
     (
-        "Come imposto un IP statico?",
-        "configurazione.txt.txt",
-        "Rete",
-    ),
-
-    (
-        "Password di default",
-        "configurazione.txt.txt",
-        "Accesso",
-    ),
-
-    (
-        "Come aggiorno il firmware?",
-        "manutenzione.txt.txt",
-        "Aggiornamento firmware",
+        "Come fugge Rapunzel di notte?",
+        "disney_story_rapunzel.txt",
+        "Fuga",
     ),
 ]
 

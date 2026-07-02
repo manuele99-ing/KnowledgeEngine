@@ -36,6 +36,9 @@ class RetrievalEngine:
         self._retriever = BM25Retriever(
             section_index=self._section_index,
             tokenizer=tokenizer,
+            k1=self._config.bm25_k1,
+            b=self._config.bm25_b,
+            semantic_weight=self._config.semantic_weight,
         )
 
         self._debugger = RetrievalDebugger(
