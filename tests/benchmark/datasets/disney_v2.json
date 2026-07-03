@@ -1,0 +1,1690 @@
+{
+  "name": "Disney Benchmark",
+  "version": "2.0",
+  "settings": {
+    "top_k": 1,
+    "llm_enabled": false
+  },
+  "questions": [
+    {
+      "id": 1,
+      "category": "knowledge",
+      "question": "Chi è Elsa?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Elsa",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 2,
+      "category": "knowledge",
+      "question": "Parlami di Elsa.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Elsa",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 3,
+      "category": "knowledge",
+      "question": "Cosa sai di Elsa?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Elsa",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 4,
+      "category": "knowledge",
+      "question": "Descrivi Elsa.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Elsa",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 5,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Elsa?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Elsa",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 6,
+      "category": "knowledge",
+      "question": "Chi è Anna?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Anna",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 7,
+      "category": "knowledge",
+      "question": "Parlami di Anna.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Anna",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 8,
+      "category": "knowledge",
+      "question": "Cosa sai di Anna?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Anna",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 9,
+      "category": "knowledge",
+      "question": "Descrivi Anna.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Anna",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 10,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Anna?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Introduzione e Contesto Generale",
+        "must_contain": [
+          "Anna",
+          "Arendelle"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 11,
+      "category": "knowledge",
+      "question": "Chi è paura?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "La Fuga",
+        "must_contain": [
+          "paura",
+          "potere"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 12,
+      "category": "knowledge",
+      "question": "Parlami di paura.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "La Fuga",
+        "must_contain": [
+          "paura",
+          "potere"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 13,
+      "category": "knowledge",
+      "question": "Cosa sai di paura?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "La Fuga",
+        "must_contain": [
+          "paura",
+          "potere"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 14,
+      "category": "knowledge",
+      "question": "Descrivi paura.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "La Fuga",
+        "must_contain": [
+          "paura",
+          "potere"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 15,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di paura?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "La Fuga",
+        "must_contain": [
+          "paura",
+          "potere"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 16,
+      "category": "knowledge",
+      "question": "Chi è montagne?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Il Castello di Ghiaccio",
+        "must_contain": [
+          "montagne",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 17,
+      "category": "knowledge",
+      "question": "Parlami di montagne.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Il Castello di Ghiaccio",
+        "must_contain": [
+          "montagne",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 18,
+      "category": "knowledge",
+      "question": "Cosa sai di montagne?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Il Castello di Ghiaccio",
+        "must_contain": [
+          "montagne",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 19,
+      "category": "knowledge",
+      "question": "Descrivi montagne.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Il Castello di Ghiaccio",
+        "must_contain": [
+          "montagne",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 20,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di montagne?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Il Castello di Ghiaccio",
+        "must_contain": [
+          "montagne",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 21,
+      "category": "knowledge",
+      "question": "Chi è Olaf?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Olaf il Pupazzo di Neve",
+        "must_contain": [
+          "Olaf",
+          "pupazzo"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 22,
+      "category": "knowledge",
+      "question": "Parlami di Olaf.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Olaf il Pupazzo di Neve",
+        "must_contain": [
+          "Olaf",
+          "pupazzo"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 23,
+      "category": "knowledge",
+      "question": "Cosa sai di Olaf?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Olaf il Pupazzo di Neve",
+        "must_contain": [
+          "Olaf",
+          "pupazzo"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 24,
+      "category": "knowledge",
+      "question": "Descrivi Olaf.",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Olaf il Pupazzo di Neve",
+        "must_contain": [
+          "Olaf",
+          "pupazzo"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 25,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Olaf?",
+      "expected": {
+        "document": "disney_story_frozen.txt",
+        "section": "Olaf il Pupazzo di Neve",
+        "must_contain": [
+          "Olaf",
+          "pupazzo"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 26,
+      "category": "knowledge",
+      "question": "Chi è Rapunzel?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "INTRODUZIONE: LA MALEDIZIONE ANTICA",
+        "must_contain": [
+          "Rapunzel",
+          "principessa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 27,
+      "category": "knowledge",
+      "question": "Parlami di Rapunzel.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "INTRODUZIONE: LA MALEDIZIONE ANTICA",
+        "must_contain": [
+          "Rapunzel",
+          "principessa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 28,
+      "category": "knowledge",
+      "question": "Cosa sai di Rapunzel?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "INTRODUZIONE: LA MALEDIZIONE ANTICA",
+        "must_contain": [
+          "Rapunzel",
+          "principessa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 29,
+      "category": "knowledge",
+      "question": "Descrivi Rapunzel.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "INTRODUZIONE: LA MALEDIZIONE ANTICA",
+        "must_contain": [
+          "Rapunzel",
+          "principessa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 30,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Rapunzel?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "INTRODUZIONE: LA MALEDIZIONE ANTICA",
+        "must_contain": [
+          "Rapunzel",
+          "principessa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 31,
+      "category": "knowledge",
+      "question": "Chi è Gothel?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Madre Gothel - L'Antagonista",
+        "must_contain": [
+          "Gothel",
+          "magia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 32,
+      "category": "knowledge",
+      "question": "Parlami di Gothel.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Madre Gothel - L'Antagonista",
+        "must_contain": [
+          "Gothel",
+          "magia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 33,
+      "category": "knowledge",
+      "question": "Cosa sai di Gothel?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Madre Gothel - L'Antagonista",
+        "must_contain": [
+          "Gothel",
+          "magia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 34,
+      "category": "knowledge",
+      "question": "Descrivi Gothel.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Madre Gothel - L'Antagonista",
+        "must_contain": [
+          "Gothel",
+          "magia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 35,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Gothel?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Madre Gothel - L'Antagonista",
+        "must_contain": [
+          "Gothel",
+          "magia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 36,
+      "category": "knowledge",
+      "question": "Chi è torre?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Il Piano di Madre Gothel",
+        "must_contain": [
+          "torre",
+          "rapita"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 37,
+      "category": "knowledge",
+      "question": "Parlami di torre.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Il Piano di Madre Gothel",
+        "must_contain": [
+          "torre",
+          "rapita"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 38,
+      "category": "knowledge",
+      "question": "Cosa sai di torre?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Il Piano di Madre Gothel",
+        "must_contain": [
+          "torre",
+          "rapita"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 39,
+      "category": "knowledge",
+      "question": "Descrivi torre.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Il Piano di Madre Gothel",
+        "must_contain": [
+          "torre",
+          "rapita"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 40,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di torre?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Il Piano di Madre Gothel",
+        "must_contain": [
+          "torre",
+          "rapita"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 41,
+      "category": "knowledge",
+      "question": "Chi è Flynn?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Chi È Flynn Rider",
+        "must_contain": [
+          "Flynn",
+          "ladro"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 42,
+      "category": "knowledge",
+      "question": "Parlami di Flynn.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Chi È Flynn Rider",
+        "must_contain": [
+          "Flynn",
+          "ladro"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 43,
+      "category": "knowledge",
+      "question": "Cosa sai di Flynn?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Chi È Flynn Rider",
+        "must_contain": [
+          "Flynn",
+          "ladro"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 44,
+      "category": "knowledge",
+      "question": "Descrivi Flynn.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Chi È Flynn Rider",
+        "must_contain": [
+          "Flynn",
+          "ladro"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 45,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Flynn?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "Chi È Flynn Rider",
+        "must_contain": [
+          "Flynn",
+          "ladro"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 46,
+      "category": "knowledge",
+      "question": "Chi è Flynn?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Partenza",
+        "must_contain": [
+          "Flynn",
+          "torre"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 47,
+      "category": "knowledge",
+      "question": "Parlami di Flynn.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Partenza",
+        "must_contain": [
+          "Flynn",
+          "torre"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 48,
+      "category": "knowledge",
+      "question": "Cosa sai di Flynn?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Partenza",
+        "must_contain": [
+          "Flynn",
+          "torre"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 49,
+      "category": "knowledge",
+      "question": "Descrivi Flynn.",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Partenza",
+        "must_contain": [
+          "Flynn",
+          "torre"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 50,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Flynn?",
+      "expected": {
+        "document": "disney_story_rapunzel.txt",
+        "section": "La Partenza",
+        "must_contain": [
+          "Flynn",
+          "torre"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 51,
+      "category": "knowledge",
+      "question": "Chi è Topolino?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Topolino - Il Protagonista",
+        "must_contain": [
+          "Topolino",
+          "Topolinia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 52,
+      "category": "knowledge",
+      "question": "Parlami di Topolino.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Topolino - Il Protagonista",
+        "must_contain": [
+          "Topolino",
+          "Topolinia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 53,
+      "category": "knowledge",
+      "question": "Cosa sai di Topolino?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Topolino - Il Protagonista",
+        "must_contain": [
+          "Topolino",
+          "Topolinia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 54,
+      "category": "knowledge",
+      "question": "Descrivi Topolino.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Topolino - Il Protagonista",
+        "must_contain": [
+          "Topolino",
+          "Topolinia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 55,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Topolino?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Topolino - Il Protagonista",
+        "must_contain": [
+          "Topolino",
+          "Topolinia"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 56,
+      "category": "knowledge",
+      "question": "Chi è Paperino?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Paperino - L'Assistente",
+        "must_contain": [
+          "Paperino",
+          "assistente"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 57,
+      "category": "knowledge",
+      "question": "Parlami di Paperino.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Paperino - L'Assistente",
+        "must_contain": [
+          "Paperino",
+          "assistente"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 58,
+      "category": "knowledge",
+      "question": "Cosa sai di Paperino?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Paperino - L'Assistente",
+        "must_contain": [
+          "Paperino",
+          "assistente"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 59,
+      "category": "knowledge",
+      "question": "Descrivi Paperino.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Paperino - L'Assistente",
+        "must_contain": [
+          "Paperino",
+          "assistente"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 60,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Paperino?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Paperino - L'Assistente",
+        "must_contain": [
+          "Paperino",
+          "assistente"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 61,
+      "category": "knowledge",
+      "question": "Chi è Pippo?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Pippo - Il Saggio",
+        "must_contain": [
+          "Pippo",
+          "saggio"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 62,
+      "category": "knowledge",
+      "question": "Parlami di Pippo.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Pippo - Il Saggio",
+        "must_contain": [
+          "Pippo",
+          "saggio"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 63,
+      "category": "knowledge",
+      "question": "Cosa sai di Pippo?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Pippo - Il Saggio",
+        "must_contain": [
+          "Pippo",
+          "saggio"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 64,
+      "category": "knowledge",
+      "question": "Descrivi Pippo.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Pippo - Il Saggio",
+        "must_contain": [
+          "Pippo",
+          "saggio"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 65,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Pippo?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "Pippo - Il Saggio",
+        "must_contain": [
+          "Pippo",
+          "saggio"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 66,
+      "category": "knowledge",
+      "question": "Chi è messaggio?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 1: IL RISVEGLIO - GIORNO 1, ORE 05:00",
+        "must_contain": [
+          "messaggio",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 67,
+      "category": "knowledge",
+      "question": "Parlami di messaggio.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 1: IL RISVEGLIO - GIORNO 1, ORE 05:00",
+        "must_contain": [
+          "messaggio",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 68,
+      "category": "knowledge",
+      "question": "Cosa sai di messaggio?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 1: IL RISVEGLIO - GIORNO 1, ORE 05:00",
+        "must_contain": [
+          "messaggio",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 69,
+      "category": "knowledge",
+      "question": "Descrivi messaggio.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 1: IL RISVEGLIO - GIORNO 1, ORE 05:00",
+        "must_contain": [
+          "messaggio",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 70,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di messaggio?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 1: IL RISVEGLIO - GIORNO 1, ORE 05:00",
+        "must_contain": [
+          "messaggio",
+          "castello"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 71,
+      "category": "knowledge",
+      "question": "Chi è Pippo?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 4: LA CONSULTAZIONE CON PIPPO - GIORNO 1, ORE 14:00",
+        "must_contain": [
+          "Pippo",
+          "mappa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 72,
+      "category": "knowledge",
+      "question": "Parlami di Pippo.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 4: LA CONSULTAZIONE CON PIPPO - GIORNO 1, ORE 14:00",
+        "must_contain": [
+          "Pippo",
+          "mappa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 73,
+      "category": "knowledge",
+      "question": "Cosa sai di Pippo?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 4: LA CONSULTAZIONE CON PIPPO - GIORNO 1, ORE 14:00",
+        "must_contain": [
+          "Pippo",
+          "mappa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 74,
+      "category": "knowledge",
+      "question": "Descrivi Pippo.",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 4: LA CONSULTAZIONE CON PIPPO - GIORNO 1, ORE 14:00",
+        "must_contain": [
+          "Pippo",
+          "mappa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 75,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Pippo?",
+      "expected": {
+        "document": "disney_story_mickey.txt",
+        "section": "FASE 4: LA CONSULTAZIONE CON PIPPO - GIORNO 1, ORE 14:00",
+        "must_contain": [
+          "Pippo",
+          "mappa"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 76,
+      "category": "knowledge",
+      "question": "Chi è Jack?",
+      "expected": {
+        "document": "disney_story_pirates.txt",
+        "section": "Captain Jack Sparrow - Il Protagonista",
+        "must_contain": [
+          "Jack",
+          "Perla Nera"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 77,
+      "category": "knowledge",
+      "question": "Parlami di Jack.",
+      "expected": {
+        "document": "disney_story_pirates.txt",
+        "section": "Captain Jack Sparrow - Il Protagonista",
+        "must_contain": [
+          "Jack",
+          "Perla Nera"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 78,
+      "category": "knowledge",
+      "question": "Cosa sai di Jack?",
+      "expected": {
+        "document": "disney_story_pirates.txt",
+        "section": "Captain Jack Sparrow - Il Protagonista",
+        "must_contain": [
+          "Jack",
+          "Perla Nera"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 79,
+      "category": "knowledge",
+      "question": "Descrivi Jack.",
+      "expected": {
+        "document": "disney_story_pirates.txt",
+        "section": "Captain Jack Sparrow - Il Protagonista",
+        "must_contain": [
+          "Jack",
+          "Perla Nera"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 80,
+      "category": "knowledge",
+      "question": "Qual è il ruolo di Jack?",
+      "expected": {
+        "document": "disney_story_pirates.txt",
+        "section": "Captain Jack Sparrow - Il Protagonista",
+        "must_contain": [
+          "Jack",
+          "Perla Nera"
+        ],
+        "must_not_contain": [
+          "Batman",
+          "Harry Potter"
+        ],
+        "minimum_keyword_score": 0.8
+      }
+    },
+    {
+      "id": 81,
+      "category": "negative",
+      "question": "Chi è Batman?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 82,
+      "category": "negative",
+      "question": "Chi è Superman?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 83,
+      "category": "negative",
+      "question": "Chi è Harry Potter?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 84,
+      "category": "negative",
+      "question": "Dove si trova Hogwarts?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 85,
+      "category": "negative",
+      "question": "Cos'è Gotham?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 86,
+      "category": "negative",
+      "question": "Chi è Frodo?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 87,
+      "category": "negative",
+      "question": "Chi è Gandalf?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 88,
+      "category": "negative",
+      "question": "Chi è Iron Man?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 89,
+      "category": "negative",
+      "question": "Qual è la capitale della Francia?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 90,
+      "category": "negative",
+      "question": "Chi ha scoperto l'America?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 91,
+      "category": "negative",
+      "question": "Chi è Spider-Man?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 92,
+      "category": "negative",
+      "question": "Chi è Hulk?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 93,
+      "category": "negative",
+      "question": "Cos'è il Millennium Falcon?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 94,
+      "category": "negative",
+      "question": "Chi è Darth Vader?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 95,
+      "category": "negative",
+      "question": "Chi è Mario Rossi?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 96,
+      "category": "negative",
+      "question": "Chi è Sonic?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 97,
+      "category": "negative",
+      "question": "Chi è Lara Croft?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 98,
+      "category": "negative",
+      "question": "Chi è Kratos?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 99,
+      "category": "negative",
+      "question": "Chi è Master Chief?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    },
+    {
+      "id": 100,
+      "category": "negative",
+      "question": "Chi è Link?",
+      "expected": {
+        "document": null,
+        "section": null,
+        "must_contain": [],
+        "must_not_contain": [],
+        "expect_no_answer": true
+      }
+    }
+  ]
+}

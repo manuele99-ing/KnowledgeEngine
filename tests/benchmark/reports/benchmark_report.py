@@ -14,53 +14,56 @@ class BenchmarkReport:
     ) -> None:
 
         print()
-        print("=" * 70)
-        print(" KNOWLEDGEENGINE QUALITY REPORT")
-        print("=" * 70)
+        print("=" * 72)
+        print(" KNOWLEDGEENGINE BENCHMARK REPORT")
+        print("=" * 72)
         print()
 
-        print(f"Questions                : {metrics.total_questions}")
+        print(f"Questions               : {metrics.total_questions}")
         print()
 
-        print("Retrieval")
-        print("-" * 70)
+        print("RETRIEVAL")
+        print("-" * 72)
         print(
-            f"Document Accuracy        : {metrics.document_score:6.2f}%"
+            f"Document Accuracy       : {metrics.document_score:6.2f}%"
         )
         print(
-            f"Section Accuracy         : {metrics.section_score:6.2f}%"
-        )
-        print()
-
-        print("Reasoning")
-        print("-" * 70)
-        print(
-            f"Reasoning Score          : {metrics.reasoning_score:6.2f}%"
+            f"Section Accuracy        : {metrics.section_score:6.2f}%"
         )
         print()
 
-        print("Answer Quality")
-        print("-" * 70)
+        print("REASONING")
+        print("-" * 72)
         print(
-            f"Keyword Coverage         : {metrics.keyword_score:6.2f}%"
-        )
-        print(
-            f"Hallucination Score      : {metrics.hallucination_score:6.2f}%"
+            f"Reasoning Score         : {metrics.reasoning_score:6.2f}%"
         )
         print()
 
-        print("Performance")
-        print("-" * 70)
+        print("ANSWER QUALITY")
+        print("-" * 72)
         print(
-            f"Average Search Time      : {metrics.average_search_time_ms:6.2f} ms"
+            f"Keyword Coverage        : {metrics.keyword_score:6.2f}%"
         )
         print(
-            f"Average Answer Time      : {metrics.average_answer_time_ms:6.2f} ms"
+            f"Hallucination Score     : {metrics.hallucination_score:6.2f}%"
+        )
+        print(
+            f"Negative Questions      : {metrics.negative_score:6.2f}%"
         )
         print()
 
-        print("=" * 70)
+        print("PERFORMANCE")
+        print("-" * 72)
         print(
-            f"OVERALL QUALITY SCORE    : {metrics.overall_score:6.2f}/100"
+            f"Average Search Time     : {metrics.average_search_time_ms:6.2f} ms"
         )
-        print("=" * 70)
+        print(
+            f"Average Answer Time     : {metrics.average_answer_time_ms:6.2f} ms"
+        )
+        print()
+
+        print("=" * 72)
+        print(
+            f"OVERALL SCORE           : {metrics.overall_score:6.2f}/100"
+        )
+        print("=" * 72)

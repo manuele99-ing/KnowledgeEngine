@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import argparse
 import json
-import time
 from pathlib import Path
 
 from knowledge_engine.loaders.directory_loader import DirectoryLoader
@@ -10,154 +10,141 @@ from knowledge_engine.retrieval.retrieval_engine import RetrievalEngine
 from knowledge_engine.semantic.knowledge_extractor import KnowledgeExtractor
 
 from tests.benchmark.metrics.benchmark_metrics import BenchmarkMetrics
-from tests.benchmark.reports.benchmark_report import BenchmarkReport
 
 
 class BenchmarkRunner:
-    """
-    Executes a benchmark dataset against KnowledgeEngine.
-    """
 
     def __init__(
         self,
-        dataset_path: str |Path,
+        dataset_path: str,
         input_directory: str = "input",
     ) -> None:
 
         self._dataset_path = Path(dataset_path)
         self._input_directory = input_directory
 
-    def run(self) -> None:
+    def run(
+        self,
+        module: str,
+    ) -> None:
 
         dataset = self._load_dataset()
 
-        retrieval_engine = self._build_retrieval_engine()
+        if module == "parser":
 
-        metrics = BenchmarkMetrics()
-
-        print("=" * 70)
-        print(" KNOWLEDGEENGINE BENCHMARK")
-        print("=" * 70)
-        print()
-
-        print(f"Dataset : {dataset['name']}")
-        print(f"Version : {dataset['version']}")
-        print()
-
-        for test in dataset["questions"]:
-
-            metrics.total_questions += 1
-
-            print(
-                f"[{test['id']:03}] {test['question']}"
+            from tests.benchmark.runners.parser_runner import (
+                ParserRunner,
             )
 
-            start = time.perf_counter()
+            ParserRunner(
+                input_directory=self._input_directory,
+                metrics=BenchmarkMetrics(),
+            ).run()
 
-            results = retrieval_engine.search(
-                question=test["question"],
-                top_k=1,
+            return
+
+        if module == "semantic":
+
+            from tests.benchmark.runners.semantic_runner import (
+                SemanticRunner,
             )
 
-            elapsed = (
-                time.perf_counter() - start
-            ) * 1000
+            SemanticRunner(
+                input_directory=self._input_directory,
+                metrics=BenchmarkMetrics(),
+            ).run()
 
-            metrics.add_search_time(elapsed)
+            return
 
-            if not results:
+        if module == "retrieval":
 
-                print("   ✗ No result")
-                print()
-
-                continue
-
-            result = results[0]
-
-            expected = test["expected"]
-
-            document_ok = (
-                result.document.source.name
-                == expected["document"]
+            from tests.benchmark.runners.retrieval_runner import (
+                RetrievalRunner,
             )
 
-            section_ok = (
-                result.section.title
-                == expected["section"]
+            RetrievalRunner(
+                dataset=dataset,
+                retrieval_engine=self._build_retrieval_engine(),
+                metrics=BenchmarkMetrics(),
+            ).run()
+
+            return
+
+        if module == "reasoning":
+
+            from tests.benchmark.runners.reasoning_runner import (
+                ReasoningRunner,
             )
 
-            metrics.add_retrieval(
-                document_ok=document_ok,
-                section_ok=section_ok,
+            ReasoningRunner(
+                dataset=dataset,
+                knowledge_base=self._build_knowledge_base(),
+                metrics=BenchmarkMetrics(),
+            ).run()
+
+            return
+
+        if module == "full":
+
+            from tests.benchmark.runners.parser_runner import (
+                ParserRunner,
             )
 
-            answer = "\n".join(
-                block.content
-                for block in result.section.blocks
-            ).lower()
-
-            keywords = [
-                keyword.lower()
-                for keyword in expected.get(
-                    "must_contain",
-                    [],
-                )
-            ]
-
-            found_keywords = sum(
-                keyword in answer
-                for keyword in keywords
+            from tests.benchmark.runners.semantic_runner import (
+                SemanticRunner,
             )
 
-            metrics.add_keyword_score(
-                found=found_keywords,
-                expected=len(keywords),
+            from tests.benchmark.runners.retrieval_runner import (
+                RetrievalRunner,
             )
 
-            hallucinated = any(
-                forbidden.lower() in answer
-                for forbidden in expected.get(
-                    "must_not_contain",
-                    [],
-                )
+            from tests.benchmark.runners.reasoning_runner import (
+                ReasoningRunner,
             )
 
-            metrics.add_hallucination(
-                hallucinated,
-            )
+            print("\n==============================")
+            print("PARSER")
+            print("==============================\n")
 
-            reasoning_ok = (
-                found_keywords
-                >= len(keywords)
-                * expected.get(
-                    "minimum_keyword_score",
-                    1.0,
-                )
-            )
+            ParserRunner(
+                input_directory=self._input_directory,
+                metrics=BenchmarkMetrics(),
+            ).run()
 
-            metrics.add_reasoning(
-                reasoning_ok,
-            )
+            print("\n==============================")
+            print("SEMANTIC")
+            print("==============================\n")
 
-            print(
-                f"   Document : {'✓' if document_ok else '✗'}"
-            )
+            SemanticRunner(
+                input_directory=self._input_directory,
+                metrics=BenchmarkMetrics(),
+            ).run()
 
-            print(
-                f"   Section  : {'✓' if section_ok else '✗'}"
-            )
+            print("\n==============================")
+            print("RETRIEVAL")
+            print("==============================\n")
 
-            print(
-                f"   Keywords : {found_keywords}/{len(keywords)}"
-            )
+            RetrievalRunner(
+                dataset=dataset,
+                retrieval_engine=self._build_retrieval_engine(),
+                metrics=BenchmarkMetrics(),
+            ).run()
 
-            print(
-                f"   Search   : {elapsed:.2f} ms"
-            )
+            print("\n==============================")
+            print("REASONING")
+            print("==============================\n")
 
-            print()
+            ReasoningRunner(
+                dataset=dataset,
+                knowledge_base=self._build_knowledge_base(),
+                metrics=BenchmarkMetrics(),
+            ).run()
 
-        BenchmarkReport.print(metrics)
+            return
+
+        raise ValueError(
+            f"Unknown benchmark module: {module}"
+        )
 
     def _load_dataset(
         self,
@@ -170,9 +157,7 @@ class BenchmarkRunner:
 
             return json.load(file)
 
-    def _build_retrieval_engine(
-        self,
-    ) -> RetrievalEngine:
+    def _build_knowledge_base(self):
 
         loader = DirectoryLoader()
 
@@ -189,20 +174,53 @@ class BenchmarkRunner:
             for document in raw_documents
         ]
 
-        knowledge_base = extractor.extract(
+        return extractor.extract(
             documents,
         )
 
+    def _build_retrieval_engine(
+        self,
+    ) -> RetrievalEngine:
+
         return RetrievalEngine(
-            knowledge_base=knowledge_base,
+            knowledge_base=self._build_knowledge_base(),
         )
 
 
 def main() -> None:
 
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--module",
+        default="retrieval",
+        choices=[
+            "parser",
+            "semantic",
+            "retrieval",
+            "reasoning",
+            "full",
+        ],
+    )
+
+    parser.add_argument(
+        "--dataset",
+        default="tests/benchmark/datasets/disney_v2.json",
+    )
+
+    parser.add_argument(
+        "--input",
+        default="input",
+    )
+
+    args = parser.parse_args()
+
     BenchmarkRunner(
-        dataset_path="tests/benchmark/datasets/disney_v1.json",
-    ).run()
+        dataset_path=args.dataset,
+        input_directory=args.input,
+    ).run(
+        module=args.module,
+    )
 
 
 if __name__ == "__main__":
