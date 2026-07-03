@@ -1,7 +1,0 @@
-# I
-
-Type: UNKNOWN
-
-## Relations
-
-- Capitolo 2: Scontro REFERENCES I
