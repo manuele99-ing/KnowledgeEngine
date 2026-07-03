@@ -15,7 +15,12 @@ class DetectHeadingsComponent(PipelineComponent):
     _markdown_heading_pattern = re.compile(r"^(#{1,6})\s*(.+)$")
     _numeric_heading_pattern = re.compile(r"^(\d+(?:\.\d+)*)(?:[\.\)])?\s+(.+)$")
     _list_item_pattern = re.compile(r"^(?:[-*+]\s+|\d+(?:\.\d+)*[\.)]\s+).+$")
-    _heading_score_threshold = 4
+    _heading_score_threshold = 6
+    
+    # Pattern that strongly suggest this is NOT a heading (narrative/descriptive content)
+    _content_pattern = re.compile(
+        r"^(Consultarono|Abbiamo|Questo|Il problema|Durante|Mentre|Quando|Dopo|Prima|Con|Senza|Perché|Anche|Tuttavia|Inoltre|Invece|Comunque|Pur|Nonostante|Realizzando|Scoprendo|Comprendo)"
+    )
 
     def process(self, data: ParseContext) -> ParseContext:
         from knowledge_engine.parsers.context.parse_context import Paragraph
@@ -141,6 +146,14 @@ class DetectHeadingsComponent(PipelineComponent):
 
         if not text[0].isupper():
             return None, None
+        
+        # PATTERN BLACKLIST: If text starts with narrative connectors, it's content not heading
+        if self._content_pattern.match(text):
+            return None, None
+        
+        # PATTERN BLACKLIST: Long sentence with colon is usually descriptive (e.g. "Consultarono i più grandi esperti:")
+        if text.endswith(":") and len(text.split()) > 5:
+            return None, None
 
         score = 0
 
@@ -151,7 +164,7 @@ class DetectHeadingsComponent(PipelineComponent):
             score += 2
 
         if text.endswith(":"):
-            score += 2
+            score += 1  # Reduced from 2 to 1 (was too aggressive)
 
         if text.isupper() and len(text.split()) <= 5:
             score += 2

@@ -26,6 +26,9 @@ from knowledge_engine.parsers.components.normalize_text_component import (
 from knowledge_engine.parsers.components.split_paragraphs_component import (
     SplitParagraphsComponent,
 )
+from knowledge_engine.parsers.components.validate_headings_component import (
+    ValidateHeadingsComponent,
+)
 from knowledge_engine.parsers.context.parse_context import ParseContext
 from knowledge_engine.parsers.document_parser import DocumentParser
 from knowledge_engine.pipeline.pipeline import Pipeline
@@ -44,6 +47,7 @@ class TextParser(DocumentParser):
         self._pipeline.add_component(ExtractTitleComponent())
         self._pipeline.add_component(SplitParagraphsComponent())
         self._pipeline.add_component(DetectHeadingsComponent())
+        self._pipeline.add_component(ValidateHeadingsComponent())
         self._pipeline.add_component(DetectListsComponent())
         self._pipeline.add_component(BuildBlocksComponent())
         self._pipeline.add_component(BuildSectionsComponent())
