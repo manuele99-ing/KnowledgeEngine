@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import spacy
 
+from knowledge_engine.retrieval.nlp.normalization.lemma_normalizer import (
+    LemmaNormalizer,
+)
+
 
 class SpacyTokenizer:
     """
@@ -15,10 +19,13 @@ class SpacyTokenizer:
         self,
         model: str = "it_core_news_md",
     ) -> None:
+
         try:
             self._nlp = spacy.load(model)
         except OSError:
             self._nlp = spacy.load("it_core_news_sm")
+
+        self._normalizer = LemmaNormalizer()
 
     def tokenize(
         self,
@@ -27,7 +34,7 @@ class SpacyTokenizer:
 
         doc = self._nlp(text)
 
-        tokens = []
+        tokens: list[str] = []
 
         for token in doc:
 
@@ -44,6 +51,8 @@ class SpacyTokenizer:
 
             if not lemma:
                 continue
+
+            lemma = self._normalizer.normalize(lemma)
 
             tokens.append(lemma)
 
@@ -62,5 +71,8 @@ class SpacyTokenizer:
         return tuple(float(value) for value in doc.vector)
 
     @property
-    def has_vectors(self) -> bool:
+    def has_vectors(
+        self,
+    ) -> bool:
+
         return self._nlp.vocab.vectors_length > 0
