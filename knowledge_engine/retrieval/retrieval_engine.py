@@ -5,28 +5,30 @@ from knowledge_engine.retrieval.config.retrieval_config import RetrievalConfig
 from knowledge_engine.retrieval.debugging.retrieval_debugger import RetrievalDebugger
 from knowledge_engine.retrieval.indexing.section_index import SectionIndex
 from knowledge_engine.retrieval.nlp.spacy_tokenizer import SpacyTokenizer
+from knowledge_engine.retrieval.query.query_processor import QueryProcessor
 from knowledge_engine.retrieval.ranking.bm25_retriever import BM25Retriever
 from knowledge_engine.retrieval.retrieved_section import RetrievedSection
 
 
 class RetrievalEngine:
     """
-    High-level retrieval API.
-
-    Pipeline
+    High-level retrieval pipeline.
 
         KnowledgeBase
-             │
-             ▼
+              │
+              ▼
         SectionIndex
-             │
-             ▼
-            BM25
-             │
-             ▼
+              │
+              ▼
+       QueryProcessor
+              │
+              ▼
+      BM25Retriever
+              │
+              ▼
      SmartSectionRanker
-             │
-             ▼
+              │
+              ▼
       RetrievedSection
     """
 
@@ -41,6 +43,10 @@ class RetrievalEngine:
 
         tokenizer = tokenizer or SpacyTokenizer()
 
+        self._query_processor = QueryProcessor(
+            tokenizer=tokenizer,
+        )
+
         self._section_index = SectionIndex.build(
             knowledge_base=knowledge_base,
             tokenizer=tokenizer,
@@ -48,7 +54,7 @@ class RetrievalEngine:
 
         self._retriever = BM25Retriever(
             section_index=self._section_index,
-            tokenizer=tokenizer,
+            query_processor=self._query_processor,
             k1=self._config.bm25_k1,
             b=self._config.bm25_b,
             semantic_weight=self._config.semantic_weight,
@@ -76,7 +82,10 @@ class RetrievalEngine:
             question=question,
             query_tokens=query_tokens,
             ranked_sections=[
-                (match.section, match.score)
+                (
+                    match.section,
+                    match.score,
+                )
                 for match in matches
             ],
         )
