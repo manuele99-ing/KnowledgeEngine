@@ -25,12 +25,51 @@ class IndexedSection:
 
     text: str
 
+    #
+    # Tokens estratti dal titolo.
+    #
+
     title_tokens: tuple[str, ...]
+
+    #
+    # Token del solo body della sezione.
+    #
 
     body_tokens: tuple[str, ...]
 
+    #
+    # Tutti i token utilizzati dal retrieval.
+    # Comprendono:
+    # - titolo
+    # - path
+    # - body
+    # - testo delle sottosezioni
+    #
+
     tokens: tuple[str, ...]
+
+    #
+    # Breadcrumb della sezione.
+    #
 
     path: tuple[str, ...]
 
+    #
+    # Embedding opzionale.
+    #
+
     vector: tuple[float, ...] = ()
+
+    @property
+    def path_text(
+        self,
+    ) -> str:
+
+        return " > ".join(self.path)
+
+    @property
+    def all_text(
+        self,
+    ) -> str:
+
+        return self.text

@@ -69,6 +69,10 @@ class SectionIndex:
 
         title = section.title.strip()
 
+        #
+        # Corpo della sezione corrente
+        #
+
         body_parts = [
             block.content.strip()
             for block in section.blocks
@@ -77,23 +81,90 @@ class SectionIndex:
 
         body = "\n".join(body_parts)
 
+        #
+        # Raccoglie ricorsivamente il testo
+        # di tutte le sottosezioni.
+        #
+
+        descendants: list[str] = []
+
+        def collect_children(
+            current: Section,
+        ) -> None:
+
+            for child in current.children:
+
+                #
+                # Titolo del figlio
+                #
+
+                if child.title.strip():
+                    descendants.append(
+                        child.title.strip()
+                    )
+
+                #
+                # Blocchi del figlio
+                #
+
+                for block in child.blocks:
+
+                    content = block.content.strip()
+
+                    if content:
+                        descendants.append(
+                            content
+                        )
+
+                collect_children(child)
+
+        collect_children(section)
+
+        descendants_text = "\n".join(
+            descendants
+        )
+
+        #
+        # Testo completo indicizzato.
+        #
+
         full_text = "\n".join(
             [
                 *section_path,
                 body,
+                descendants_text,
             ]
         ).strip()
 
-        title_tokens = tokenizer.tokenize(title)
+        #
+        # Tokenizzazione
+        #
 
-        body_tokens = tokenizer.tokenize(body)
+        title_tokens = tokenizer.tokenize(
+            title
+        )
 
-        path_tokens = tokenizer.tokenize(" ".join(section_path))
+        body_tokens = tokenizer.tokenize(
+            body
+        )
+
+        descendants_tokens = tokenizer.tokenize(
+            descendants_text
+        )
+
+        path_tokens = tokenizer.tokenize(
+            " ".join(section_path)
+        )
+
+        #
+        # Tutti i token del ramo.
+        #
 
         tokens = (
             title_tokens
             + path_tokens
             + body_tokens
+            + descendants_tokens
         )
 
         indexed_sections.append(
@@ -114,7 +185,13 @@ class SectionIndex:
             )
         )
 
+        #
+        # Continuiamo ad indicizzare anche
+        # le sottosezioni come sezioni autonome.
+        #
+
         for child in section.children:
+
             cls._index_section(
                 document=document,
                 section=child,
@@ -122,3 +199,154 @@ class SectionIndex:
                 path=section_path,
                 indexed_sections=indexed_sections,
             )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

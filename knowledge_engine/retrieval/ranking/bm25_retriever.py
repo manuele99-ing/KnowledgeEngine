@@ -96,6 +96,16 @@ class BM25Retriever:
             matches
         )
 
+        #
+        # Ordine finale.
+        #
+
+        matches = sorted(
+            matches,
+            key=lambda item: item.score,
+            reverse=True,
+        )
+
         return (
             matches[:top_k],
             list(analyzed_query.all_tokens),
@@ -112,23 +122,50 @@ class BM25Retriever:
         query: AnalyzedQuery,
     ) -> list[RetrievalMatch]:
 
+        #
+        # Costruiamo una query pesata.
+        #
+
+        weighted_query: list[str] = []
+
+        weighted_query.extend(query.tokens)
+
+        #
+        # Le entità sono molto importanti.
+        #
+
+        for token in query.entities:
+            weighted_query.extend([token.lower()] * 3)
+
+        #
+        # I boosted token hanno peso doppio.
+        #
+
+        for token in query.boosted_tokens:
+            weighted_query.extend([token.lower()] * 2)
+
+        #
+        # I token espansi migliorano il recall.
+        #
+
+        for token in query.expanded_tokens:
+
+            token = token.lower()
+
+            if token not in weighted_query:
+                weighted_query.append(token)
+
         scores = self._bm25.get_scores(
-            list(query.all_tokens)
+            weighted_query
         )
 
         query_vector = ()
 
-        matches: list[
-            RetrievalMatch
-        ] = []
+        matches: list[RetrievalMatch] = []
 
-        for index, bm25_score in enumerate(
-            scores
-        ):
+        for index, bm25_score in enumerate(scores):
 
-            section = (
-                self._section_index.sections[index]
-            )
+            section = self._section_index.sections[index]
 
             semantic_score = 0.0
 
@@ -137,20 +174,33 @@ class BM25Retriever:
                 and
                 section.vector
             ):
-
-                semantic_score = (
-                    self._cosine_similarity(
-                        query_vector,
-                        section.vector,
-                    )
+                semantic_score = self._cosine_similarity(
+                    query_vector,
+                    section.vector,
                 )
 
             final_score = (
                 bm25_score
-                +
-                semantic_score
-                * self._semantic_weight
+                + semantic_score * self._semantic_weight
             )
+
+            #
+            # Bonus se i token principali sono
+            # presenti nel titolo della sezione.
+            #
+
+            title_tokens = {
+                token.lower()
+                for token in section.title_tokens
+            }
+
+            title_matches = sum(
+                1
+                for token in query.tokens
+                if token.lower() in title_tokens
+            )
+
+            final_score += title_matches * 0.75
 
             if final_score <= 0:
                 continue
@@ -194,7 +244,7 @@ class BM25Retriever:
         # Only rerank the best lexical candidates.
         #
 
-        candidates = candidates[:20]
+        candidates = candidates[:40]
 
         ranked = self._ranker.rerank(
             matches=candidates,
@@ -228,31 +278,48 @@ class BM25Retriever:
         best_score = matches[0].score
 
         #
-        # Reject completely unrelated questions.
+        # Nessun candidato realmente valido.
         #
 
-        if best_score < 0.15:
+        if best_score <= 0.05:
             return []
 
+        filtered: list[RetrievalMatch] = []
+
         #
-        # Adaptive threshold based on the best match.
+        # Manteniamo tutti i risultati vicini
+        # al migliore.
         #
 
-        threshold = max(
-            0.10,
-            best_score * 0.20,
+        dynamic_threshold = best_score * 0.35
+
+        #
+        # Evitiamo di eliminare troppo presto
+        # sezioni che il reranker ha promosso.
+        #
+
+        dynamic_threshold = max(
+            dynamic_threshold,
+            0.20,
         )
-
-        filtered: list[
-            RetrievalMatch
-        ] = []
 
         for match in matches:
 
-            if match.score < threshold:
-                continue
+            if match.score >= dynamic_threshold:
+                filtered.append(match)
 
-            filtered.append(match)
+        #
+        # Garantiamo almeno 5 candidati.
+        #
+
+        if len(filtered) < 5:
+
+            filtered = matches[
+                : min(
+                    5,
+                    len(matches),
+                )
+            ]
 
         return filtered
 
