@@ -11,10 +11,23 @@ from knowledge_engine.retrieval.retrieved_section import RetrievedSection
 
 class RetrievalEngine:
     """
-    High-level interface for document retrieval.
+    High-level retrieval API.
 
-    This class coordinates indexing, retrieval and debugging while
-    exposing a simple API to the rest of the application.
+    Pipeline
+
+        KnowledgeBase
+             │
+             ▼
+        SectionIndex
+             │
+             ▼
+            BM25
+             │
+             ▼
+     SmartSectionRanker
+             │
+             ▼
+      RetrievedSection
     """
 
     def __init__(

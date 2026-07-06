@@ -19,7 +19,9 @@ class SectionIndex:
         self._sections = sections
 
     @property
-    def sections(self) -> tuple[IndexedSection, ...]:
+    def sections(
+        self,
+    ) -> tuple[IndexedSection, ...]:
         return self._sections
 
     @classmethod
@@ -65,25 +67,50 @@ class SectionIndex:
 
         section_path = (*path, section.title)
 
-        text_parts = [
-            *section_path,
-            *(
-                block.content.strip()
-                for block in section.blocks
-                if block.content.strip()
-            ),
+        title = section.title.strip()
+
+        body_parts = [
+            block.content.strip()
+            for block in section.blocks
+            if block.content.strip()
         ]
 
-        text = "\n".join(text_parts)
+        body = "\n".join(body_parts)
+
+        full_text = "\n".join(
+            [
+                *section_path,
+                body,
+            ]
+        ).strip()
+
+        title_tokens = tokenizer.tokenize(title)
+
+        body_tokens = tokenizer.tokenize(body)
+
+        path_tokens = tokenizer.tokenize(" ".join(section_path))
+
+        tokens = (
+            title_tokens
+            + path_tokens
+            + body_tokens
+        )
 
         indexed_sections.append(
             IndexedSection(
                 document=document,
                 section=section,
-                text=text,
-                tokens=tokenizer.tokenize(text),
+                title=title,
+                body=body,
+                text=full_text,
+                title_tokens=title_tokens,
+                body_tokens=body_tokens,
+                tokens=tokens,
                 path=section_path,
-                vector=cls._section_vector(tokenizer, text),
+                vector=cls._section_vector(
+                    tokenizer,
+                    full_text,
+                ),
             )
         )
 
