@@ -1,0 +1,197 @@
+[
+  {
+    "id": 1,
+    "name": "Entity in title",
+    "purpose": "TITLE_SCORE",
+    "question": "Chi è Olaf?",
+    "expected_document": "disney_story_frozen.txt",
+    "expected_section": "Olaf il Pupazzo di Neve",
+    "acceptable_sections": [
+      "Il Castello di Ghiaccio"
+    ],
+    "debug": {
+      "expect_title_match": true,
+      "expect_body_match": true,
+      "expect_entity_match": true,
+      "expect_path_match": false,
+      "expect_coverage": true,
+      "expect_complete_match": false,
+      "expect_intent": "DESCRIPTION"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Entity in body",
+    "purpose": "BODY_SCORE",
+    "question": "Chi guida i guaritori della città?",
+    "expected_document": "disney_story_frozen.txt",
+    "expected_section": "I Guaritori",
+    "acceptable_sections": [
+      "I Personaggi Secondari"
+    ],
+    "debug": {
+      "expect_title_match": false,
+      "expect_body_match": true,
+      "expect_entity_match": true,
+      "expect_path_match": true,
+      "expect_coverage": false,
+      "expect_complete_match": false,
+      "expect_intent": "DESCRIPTION"
+    }
+  },
+  {
+    "id": 3,
+    "name": "Hierarchy path",
+    "purpose": "PATH_SCORE",
+    "question": "Descrivi il Regno di Corona.",
+    "expected_document": "disney_story_rapunzel.txt",
+    "expected_section": "Il Regno di Corona",
+    "acceptable_sections": [
+      "La Geografia"
+    ],
+    "debug": {
+      "expect_title_match": true,
+      "expect_body_match": true,
+      "expect_entity_match": false,
+      "expect_path_match": true,
+      "expect_coverage": true,
+      "expect_complete_match": false,
+      "expect_intent": "DESCRIPTION"
+    }
+  },
+  {
+    "id": 4,
+    "name": "Parent vs Child",
+    "purpose": "SECTION_HIERARCHY",
+    "question": "Come è fatta la Perla Nera?",
+    "expected_document": "disney_story_pirates.txt",
+    "expected_section": "La Perla Nera - La Nave Leggendaria",
+    "acceptable_sections": [
+      "Le Navi Principali"
+    ],
+    "debug": {
+      "expect_title_match": true,
+      "expect_body_match": true,
+      "expect_entity_match": true,
+      "expect_path_match": true,
+      "expect_coverage": true,
+      "expect_complete_match": false,
+      "expect_intent": "DESCRIPTION"
+    }
+  },
+  {
+    "id": 5,
+    "name": "Procedure",
+    "purpose": "INTENT_PROCEDURE",
+    "question": "Come si preparò Topolino prima della missione?",
+    "expected_document": "disney_story_mickey.txt",
+    "expected_section": "FASE 2: LA RACCOLTA DELL'EQUIPAGGIAMENTO",
+    "acceptable_sections": [
+      "I PREPARATIVI"
+    ],
+    "debug": {
+      "expect_title_match": true,
+      "expect_body_match": true,
+      "expect_entity_match": false,
+      "expect_path_match": true,
+      "expect_coverage": true,
+      "expect_complete_match": true,
+      "expect_intent": "PROCEDURE"
+    }
+  },
+  {
+    "id": 6,
+    "name": "Description",
+    "purpose": "INTENT_DESCRIPTION",
+    "question": "Descrivi Madre Gothel.",
+    "expected_document": "disney_story_rapunzel.txt",
+    "expected_section": "La Madre Gothel - L'Antagonista",
+    "acceptable_sections": [
+      "Chi Era Originariamente"
+    ],
+    "debug": {
+      "expect_title_match": true,
+      "expect_body_match": true,
+      "expect_entity_match": true,
+      "expect_path_match": true,
+      "expect_coverage": true,
+      "expect_complete_match": false,
+      "expect_intent": "DESCRIPTION"
+    }
+  },
+  {
+    "id": 7,
+    "name": "Complete match",
+    "purpose": "COMPLETE_MATCH",
+    "question": "Quali sono le fasi della routine mattutina di Topolino?",
+    "expected_document": "disney_story_mickey.txt",
+    "expected_section": "FASE 1: IL RISVEGLIO - GIORNO 1, ORE 05:00",
+    "acceptable_sections": [
+      "I PREPARATIVI"
+    ],
+    "debug": {
+      "expect_title_match": true,
+      "expect_body_match": true,
+      "expect_entity_match": false,
+      "expect_path_match": true,
+      "expect_coverage": true,
+      "expect_complete_match": true,
+      "expect_intent": "LIST"
+    }
+  },
+  {
+    "id": 8,
+    "name": "Coverage",
+    "purpose": "COVERAGE_SCORE",
+    "question": "Raccontami il viaggio di Anna verso Elsa.",
+    "expected_document": "disney_story_frozen.txt",
+    "expected_section": "La Ricerca di Anna",
+    "acceptable_sections": [
+      "Il Viaggio Verso la Riconciliazione"
+    ],
+    "debug": {
+      "expect_title_match": false,
+      "expect_body_match": true,
+      "expect_entity_match": true,
+      "expect_path_match": true,
+      "expect_coverage": true,
+      "expect_complete_match": false,
+      "expect_intent": "NARRATIVE"
+    }
+  },
+  {
+    "id": 9,
+    "name": "Ambiguous sections",
+    "purpose": "RERANKING",
+    "question": "Chi è Barbossa?",
+    "expected_document": "disney_story_pirates.txt",
+    "expected_section": "Barbossa - Il Nemico Complesso",
+    "acceptable_sections": [
+      "La Rivelazione su Elizabeth",
+      "La Scoperta di Will"
+    ],
+    "debug": {
+      "expect_title_match": true,
+      "expect_body_match": true,
+      "expect_entity_match": true,
+      "expect_path_match": true,
+      "expect_coverage": false,
+      "expect_complete_match": false,
+      "expect_intent": "DESCRIPTION"
+    }
+  },
+  {
+    "id": 10,
+    "name": "Negative retrieval",
+    "purpose": "THRESHOLD",
+    "question": "Qual è il numero di telefono di Elsa?",
+    "expected_document": null,
+    "expected_section": null,
+    "acceptable_sections": [],
+    "debug": {
+      "expect_empty_result": true,
+      "expect_threshold_rejection": true,
+      "expect_intent": "UNKNOWN"
+    }
+  }
+]
