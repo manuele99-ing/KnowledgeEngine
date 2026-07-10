@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+from pathlib import Path
+
+from knowledge_engine.language.runtime.language_engine import (
+    LanguageEngine,
+)
 from knowledge_engine.retrieval.nlp.nlp_document import NLPDocument
 from knowledge_engine.retrieval.query.analyzed_query import AnalyzedQuery
 from knowledge_engine.retrieval.query.entity_extractor import EntityExtractor
@@ -20,12 +25,15 @@ class QueryAnalyzer:
 
     def __init__(
         self,
+        language: LanguageEngine | None = None,
     ) -> None:
 
         self._intent_detector = IntentDetector()
         self._keyword_extractor = KeywordExtractor()
         self._entity_extractor = EntityExtractor()
         self._query_expander = QueryExpander()
+
+        self._language = language
 
     def analyze(
         self,
@@ -34,6 +42,10 @@ class QueryAnalyzer:
     ) -> AnalyzedQuery:
 
         doc = document.doc
+
+        #
+        # Existing lexical pipeline.
+        #
 
         intent = self._intent_detector.detect(doc)
 
@@ -54,6 +66,53 @@ class QueryAnalyzer:
             intent,
         )
 
+        #
+        # Semantic pipeline.
+        #
+
+        semantic_embedding = None
+        semantic_intent = "unknown"
+        semantic_keywords = ()
+        semantic_entities = ()
+        semantic_expanded = ()
+        semantic_confidence = 0.0
+
+        if self._language is not None:
+
+            try:
+
+                semantic = self._language.analyze(
+                    original_text
+                )
+
+                semantic_embedding = (
+                    semantic.embedding
+                )
+
+                semantic_intent = (
+                    semantic.intent
+                )
+
+                semantic_keywords = (
+                    semantic.keywords
+                )
+
+                semantic_entities = (
+                    semantic.entities
+                )
+
+                semantic_expanded = (
+                    semantic.expanded_keywords
+                )
+
+                semantic_confidence = (
+                    semantic.confidence
+                )
+
+            except Exception:
+
+                pass
+
         return AnalyzedQuery(
             text=original_text,
             intent=intent,
@@ -62,6 +121,12 @@ class QueryAnalyzer:
             boosted_tokens=boosted,
             expanded_tokens=expanded,
             confidence=confidence,
+            semantic_embedding=semantic_embedding,
+            semantic_intent=semantic_intent,
+            semantic_keywords=semantic_keywords,
+            semantic_entities=semantic_entities,
+            semantic_expanded_tokens=semantic_expanded,
+            semantic_confidence=semantic_confidence,
         )
 
     @staticmethod

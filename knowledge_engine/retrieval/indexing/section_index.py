@@ -3,6 +3,7 @@ from __future__ import annotations
 from knowledge_engine.domain.document.document import Document
 from knowledge_engine.domain.document.section import Section
 from knowledge_engine.domain.knowledge.knowledge_base import KnowledgeBase
+from knowledge_engine.language.runtime.language_engine import LanguageEngine
 from knowledge_engine.retrieval.indexing.indexed_section import IndexedSection
 from knowledge_engine.retrieval.nlp.spacy_tokenizer import SpacyTokenizer
 
@@ -29,6 +30,7 @@ class SectionIndex:
         cls,
         knowledge_base: KnowledgeBase,
         tokenizer: SpacyTokenizer | None = None,
+        language: LanguageEngine | None = None,
     ) -> "SectionIndex":
 
         tokenizer = tokenizer or SpacyTokenizer()
@@ -41,19 +43,12 @@ class SectionIndex:
                     document=document,
                     section=section,
                     tokenizer=tokenizer,
+                    language=language,
                     path=(),
                     indexed_sections=indexed_sections,
                 )
 
         return cls(tuple(indexed_sections))
-
-    @staticmethod
-    def _section_vector(
-        tokenizer: SpacyTokenizer,
-        text: str,
-    ) -> tuple[float, ...]:
-
-        return tokenizer.vector(text)
 
     @classmethod
     def _index_section(
@@ -61,6 +56,7 @@ class SectionIndex:
         document: Document,
         section: Section,
         tokenizer: SpacyTokenizer,
+        language: LanguageEngine | None,
         path: tuple[str, ...],
         indexed_sections: list[IndexedSection],
     ) -> None:
@@ -94,18 +90,10 @@ class SectionIndex:
 
             for child in current.children:
 
-                #
-                # Titolo del figlio
-                #
-
                 if child.title.strip():
                     descendants.append(
                         child.title.strip()
                     )
-
-                #
-                # Blocchi del figlio
-                #
 
                 for block in child.blocks:
 
@@ -120,12 +108,10 @@ class SectionIndex:
 
         collect_children(section)
 
-        descendants_text = "\n".join(
-            descendants
-        )
+        descendants_text = "\n".join(descendants)
 
         #
-        # Testo completo indicizzato.
+        # Testo completo della sezione.
         #
 
         full_text = "\n".join(
@@ -137,7 +123,7 @@ class SectionIndex:
         ).strip()
 
         #
-        # Tokenizzazione
+        # Tokenizzazione (spaCy)
         #
 
         title_tokens = tokenizer.tokenize(
@@ -156,16 +142,26 @@ class SectionIndex:
             " ".join(section_path)
         )
 
-        #
-        # Tutti i token del ramo.
-        #
-
         tokens = (
             title_tokens
             + path_tokens
             + body_tokens
             + descendants_tokens
         )
+
+        #
+        # Semantic embedding (Language)
+        #
+
+        embedding = None
+
+        if (
+            language is not None
+            and full_text
+        ):
+            embedding = language.encoder.encode(
+                full_text
+            )
 
         indexed_sections.append(
             IndexedSection(
@@ -178,16 +174,12 @@ class SectionIndex:
                 body_tokens=body_tokens,
                 tokens=tokens,
                 path=section_path,
-                vector=cls._section_vector(
-                    tokenizer,
-                    full_text,
-                ),
+                embedding=embedding,
             )
         )
 
         #
-        # Continuiamo ad indicizzare anche
-        # le sottosezioni come sezioni autonome.
+        # Indicizza anche le sottosezioni.
         #
 
         for child in section.children:
@@ -196,157 +188,7 @@ class SectionIndex:
                 document=document,
                 section=child,
                 tokenizer=tokenizer,
+                language=language,
                 path=section_path,
                 indexed_sections=indexed_sections,
             )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

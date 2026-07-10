@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import numpy as np
+
 from knowledge_engine.domain.document.document import Document
 from knowledge_engine.domain.document.section import Section
 
@@ -39,11 +41,6 @@ class IndexedSection:
 
     #
     # Tutti i token utilizzati dal retrieval.
-    # Comprendono:
-    # - titolo
-    # - path
-    # - body
-    # - testo delle sottosezioni
     #
 
     tokens: tuple[str, ...]
@@ -55,10 +52,10 @@ class IndexedSection:
     path: tuple[str, ...]
 
     #
-    # Embedding opzionale.
+    # Semantic embedding (BGE).
     #
 
-    vector: tuple[float, ...] = ()
+    embedding: np.ndarray | None = None
 
     @property
     def path_text(
@@ -73,3 +70,10 @@ class IndexedSection:
     ) -> str:
 
         return self.text
+
+    @property
+    def has_embedding(
+        self,
+    ) -> bool:
+
+        return self.embedding is not None

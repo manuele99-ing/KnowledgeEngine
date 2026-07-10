@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-from knowledge_engine.language.runtime.language_encoder import LanguageEncoder
-from knowledge_engine.language.runtime.semantic_query import SemanticQuery
 from knowledge_engine.language.runtime.intent_detector import (
     Intent,
     IntentDetector,
+)
+from knowledge_engine.language.runtime.language_encoder import (
+    LanguageEncoder,
+)
+from knowledge_engine.language.runtime.semantic_query import (
+    SemanticQuery,
 )
 
 
@@ -50,23 +54,59 @@ class SemanticAnalyzer:
         of a user query.
         """
 
-        embedding = self._encode(query)
+        #
+        # Single embedding computation.
+        #
 
-        intent = self._detect_intent(query)
+        embedding = self._encode(
+            query
+        )
 
-        confidence = self._intent_confidence(query)
+        #
+        # Semantic intent.
+        #
+
+        if embedding is not None:
+
+            intent = self._intent_detector.detect(
+                embedding
+            )
+
+            confidence = (
+                self._intent_detector.confidence(
+                    embedding
+                )
+            )
+
+            #
+            # Temporary debug.
+            #
+
+            self._intent_detector.print_debug(
+                query=query,
+                query_embedding=embedding,
+            )
+
+        else:
+
+            intent = Intent(
+                name="unknown",
+                description="",
+            )
+
+            confidence = 0.0
 
         #
         # Placeholder.
         #
-        # These components will later be replaced by
-        # semantic extractors trained with the language
-        # model.
-        #
 
-        keywords = self._extract_keywords(query)
+        keywords = self._extract_keywords(
+            query
+        )
 
-        entities = self._extract_entities(query)
+        entities = self._extract_entities(
+            query
+        )
 
         expanded = self._expand_keywords(
             keywords
@@ -89,33 +129,13 @@ class SemanticAnalyzer:
 
         try:
 
-            return self._encoder.encode(query)
+            return self._encoder.encode(
+                query
+            )
 
         except NotImplementedError:
 
-            #
-            # Encoder not available yet.
-            #
-
             return None
-
-    def _detect_intent(
-        self,
-        query: str,
-    ) -> Intent:
-
-        return self._intent_detector.detect(
-            query
-        )
-
-    def _intent_confidence(
-        self,
-        query: str,
-    ) -> float:
-
-        return self._intent_detector.confidence(
-            query
-        )
 
     #
     # ------------------------------------------------------------------

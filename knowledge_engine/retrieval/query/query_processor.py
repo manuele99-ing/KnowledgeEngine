@@ -21,8 +21,13 @@ class QueryProcessor:
     ) -> None:
 
         self._tokenizer = tokenizer or SpacyTokenizer()
-        self._analyzer = analyzer or QueryAnalyzer()
+        if analyzer is None:
+            raise ValueError(
+                "QueryProcessor requires a QueryAnalyzer instance."
+            )
 
+        self._analyzer = analyzer
+        
     def process(
         self,
         question: str,

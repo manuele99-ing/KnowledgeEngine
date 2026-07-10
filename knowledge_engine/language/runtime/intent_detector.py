@@ -21,13 +21,8 @@ class Intent:
 
 class IntentDetector:
     """
-    Detects the semantic intent of a user query.
-
-    The detector is based on semantic similarity rather
-    than keyword matching.
-
-    Every intent is represented by a natural language
-    description encoded by the LanguageEncoder.
+    Detects the semantic intent of a user query using
+    semantic similarity.
     """
 
     def __init__(
@@ -42,6 +37,7 @@ class IntentDetector:
         #
         # Cached intent embeddings.
         #
+
         self._intent_embeddings = [
             encoder.encode(
                 intent.description
@@ -49,46 +45,131 @@ class IntentDetector:
             for intent in intents
         ]
 
+    #
+    # -------------------------------------------------------
+    # Public API
+    # -------------------------------------------------------
+    #
+
     def detect(
         self,
-        query: str,
+        query_embedding: np.ndarray,
     ) -> Intent:
-        """
-        Returns the most semantically similar intent.
-        """
 
-        query_embedding = self._encoder.encode(
-            query
+        ranking = SemanticSimilarity.rank(
+            query_embedding=query_embedding,
+            candidates=self._intent_embeddings,
         )
 
-        index = SemanticSimilarity.most_similar(
-            query_embedding,
-            self._intent_embeddings,
-        )
-
-        return self._intents[index]
+        return self._intents[
+            ranking[0][0]
+        ]
 
     def confidence(
         self,
-        query: str,
+        query_embedding: np.ndarray,
     ) -> float:
-        """
-        Returns the similarity score of the detected intent.
-        """
 
-        query_embedding = self._encoder.encode(
-            query
+        ranking = SemanticSimilarity.rank(
+            query_embedding=query_embedding,
+            candidates=self._intent_embeddings,
         )
 
-        similarities = [
-            SemanticSimilarity.cosine(
-                query_embedding,
-                embedding,
+        return ranking[0][1]
+
+    def ranking(
+        self,
+        query_embedding: np.ndarray,
+    ) -> list[tuple[int, float]]:
+
+        return SemanticSimilarity.rank(
+            query_embedding=query_embedding,
+            candidates=self._intent_embeddings,
+        )
+
+    #
+    # -------------------------------------------------------
+    # Debug
+    # -------------------------------------------------------
+    #
+
+    def print_debug(
+        self,
+        query: str,
+        query_embedding: np.ndarray,
+    ) -> None:
+
+        ranking = self.ranking(
+            query_embedding
+        )
+
+        print()
+        print("=" * 70)
+        print("LANGUAGE INTENT DEBUG")
+        print("=" * 70)
+
+        print()
+        print("Query")
+        print(query)
+
+        print()
+
+        print(
+            f"Embedding dimension : {query_embedding.shape[0]}"
+        )
+
+        print(
+            f"Embedding norm      : {np.linalg.norm(query_embedding):.4f}"
+        )
+
+        print()
+
+        print("Intent ranking")
+
+        for position, (index, score) in enumerate(
+            ranking,
+            start=1,
+        ):
+
+            marker = ""
+
+            if position == 1:
+                marker = "<--"
+
+            print(
+                f"{position:2d}. "
+                f"{self._intents[index].name:<18}"
+                f"{score:.4f} {marker}"
             )
-            for embedding in self._intent_embeddings
+
+        print()
+
+        winner = self._intents[
+            ranking[0][0]
         ]
 
-        return max(similarities)
+        print("Winning intent")
+        print(winner.name)
+
+        print()
+
+        print("Confidence")
+        print(f"{ranking[0][1]:.4f}")
+
+        if len(ranking) > 1:
+
+            margin = (
+                ranking[0][1]
+                - ranking[1][1]
+            )
+
+            print()
+
+            print("Margin over second")
+            print(f"{margin:.4f}")
+
+        print("=" * 70)
+        print()
 
     @property
     def intents(

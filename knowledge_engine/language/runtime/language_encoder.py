@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-import onnxruntime as ort
+from sentence_transformers import SentenceTransformer
 
 
 class LanguageEncoder:
@@ -11,32 +11,34 @@ class LanguageEncoder:
     Encodes text into semantic embeddings using the
     KnowledgeEngine language model.
 
-    This class is the single entry point for semantic
-    encoding during runtime.
+    This implementation currently uses a
+    SentenceTransformer model (BGE).
 
-    It is intentionally independent from the retrieval
-    module and from any specific LLM.
+    The rest of the project remains completely
+    independent from the underlying implementation,
+    making it possible to switch to ONNX later
+    without changing Retrieval.
     """
 
     def __init__(
         self,
-        model_path: Path,
+        model_path: Path | str,
     ) -> None:
 
-        self._session = ort.InferenceSession(
-            str(model_path),
-            providers=["CPUExecutionProvider"],
-        )
+        if isinstance(model_path, Path):
+            model_path = str(model_path)
 
-        self._input_name = self._session.get_inputs()[0].name
-        self._output_name = self._session.get_outputs()[0].name
+        self._model = SentenceTransformer(
+            model_path,
+            trust_remote_code=False,
+        )
 
     def encode(
         self,
         text: str,
     ) -> np.ndarray:
         """
-        Encodes a piece of text.
+        Encodes a text into a normalized embedding.
 
         Parameters
         ----------
@@ -46,31 +48,26 @@ class LanguageEncoder:
         Returns
         -------
         numpy.ndarray
-
-            Embedding vector.
+            Normalized embedding vector.
         """
 
-        #
-        # Placeholder.
-        #
-        # The preprocessing/tokenization pipeline will be
-        # implemented once the first ONNX model is trained.
-        #
-
-        raise NotImplementedError(
-            "Language encoder preprocessing "
-            "has not been implemented yet."
+        embedding = self._model.encode(
+            text,
+            convert_to_numpy=True,
+            normalize_embeddings=True,
+            show_progress_bar=False,
         )
+
+        return embedding.astype(np.float32)
 
     @property
     def embedding_size(
         self,
     ) -> int:
         """
-        Returns the output embedding dimension.
-
-        Currently unavailable until the first
-        model is exported.
+        Returns the embedding dimension.
         """
 
-        raise NotImplementedError()
+        return int(
+            self._model.get_embedding_dimension()
+        )

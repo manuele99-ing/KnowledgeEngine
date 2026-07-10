@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from knowledge_engine.domain.knowledge.knowledge_base import KnowledgeBase
+from knowledge_engine.language.runtime.language_engine import LanguageEngine
 from knowledge_engine.retrieval.config.retrieval_config import RetrievalConfig
 from knowledge_engine.retrieval.debugging.retrieval_debugger import RetrievalDebugger
 from knowledge_engine.retrieval.indexing.section_index import SectionIndex
 from knowledge_engine.retrieval.nlp.spacy_tokenizer import SpacyTokenizer
+from knowledge_engine.retrieval.query.query_analyzer import QueryAnalyzer
 from knowledge_engine.retrieval.query.query_processor import QueryProcessor
 from knowledge_engine.retrieval.ranking.bm25_retriever import BM25Retriever
 from knowledge_engine.retrieval.retrieved_section import RetrievedSection
@@ -37,19 +39,33 @@ class RetrievalEngine:
         knowledge_base: KnowledgeBase,
         tokenizer: SpacyTokenizer | None = None,
         config: RetrievalConfig | None = None,
+        language: LanguageEngine | None = None,
     ) -> None:
 
         self._config = config or RetrievalConfig()
 
         tokenizer = tokenizer or SpacyTokenizer()
 
+        #
+        # Single shared LanguageEncoder.
+        #
+
+        self._language = (
+            language
+            or LanguageEngine("BAAI/bge-m3")
+        )
+
         self._query_processor = QueryProcessor(
             tokenizer=tokenizer,
+            analyzer=QueryAnalyzer(
+                language=self._language,
+            ),
         )
 
         self._section_index = SectionIndex.build(
             knowledge_base=knowledge_base,
             tokenizer=tokenizer,
+            language=self._language,
         )
 
         self._retriever = BM25Retriever(
@@ -103,3 +119,10 @@ class RetrievalEngine:
             )
 
         return results
+
+    @property
+    def language(
+        self,
+    ) -> LanguageEngine:
+
+        return self._language

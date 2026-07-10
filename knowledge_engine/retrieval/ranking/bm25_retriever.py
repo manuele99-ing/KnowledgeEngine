@@ -12,7 +12,6 @@ from knowledge_engine.retrieval.ranking.smart_section_ranker import (
 )
 from knowledge_engine.retrieval.retrieval_match import RetrievalMatch
 
-
 class BM25Retriever:
     """
     BM25 lexical retriever.
@@ -159,7 +158,7 @@ class BM25Retriever:
             weighted_query
         )
 
-        query_vector = ()
+        query_vector = query.semantic_embedding
 
         matches: list[RetrievalMatch] = []
 
@@ -170,13 +169,13 @@ class BM25Retriever:
             semantic_score = 0.0
 
             if (
-                query_vector
+                query_vector is not None
                 and
-                section.vector
+                section.embedding is not None
             ):
                 semantic_score = self._cosine_similarity(
                     query_vector,
-                    section.vector,
+                    section.embedding,
                 )
 
             final_score = (
@@ -331,14 +330,14 @@ class BM25Retriever:
 
     @staticmethod
     def _cosine_similarity(
-        vector_a: tuple[float, ...],
-        vector_b: tuple[float, ...],
+        vector_a,
+        vector_b,
     ) -> float:
 
-        if not vector_a:
+        if vector_a is None:
             return 0.0
 
-        if not vector_b:
+        if vector_b is None:
             return 0.0
 
         dot = sum(
