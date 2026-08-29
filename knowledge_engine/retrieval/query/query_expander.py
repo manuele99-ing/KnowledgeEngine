@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from spacy.tokens import Doc
 
+from knowledge_engine.retrieval.nlp.normalization.lemma_normalizer import (
+    LemmaNormalizer,
+)
+
 
 class QueryExpander:
     """
@@ -19,6 +23,13 @@ class QueryExpander:
 
     without changing the retrieval pipeline.
     """
+
+    def __init__(
+        self,
+        normalizer: LemmaNormalizer | None = None,
+    ) -> None:
+
+        self._normalizer = normalizer or LemmaNormalizer()
 
     def expand(
         self,
@@ -44,6 +55,11 @@ class QueryExpander:
                 continue
 
             lemma = token.lemma_.strip().lower()
+
+            if lemma and lemma not in seen:
+                lemma = self._normalizer.normalize(
+                    lemma
+                )
 
             if lemma and lemma not in seen:
                 seen.add(lemma)

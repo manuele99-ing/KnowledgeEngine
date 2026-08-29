@@ -47,6 +47,17 @@ class LemmaNormalizer:
 
         # aggiornamento
         "aggiornamento": "aggiornare",
+
+        # preparazione
+        "preparativo": "preparare",
+        "preparativi": "preparare",
+        "preparazione": "preparare",
+
+        # raccolta
+        "raccolta": "raccogliere",
+
+        # equipaggiamento
+        "equipaggiamento": "equipaggiare",
     }
 
     def normalize(

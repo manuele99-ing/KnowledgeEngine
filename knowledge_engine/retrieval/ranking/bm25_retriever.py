@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from math import sqrt
 
@@ -35,16 +35,16 @@ class BM25Retriever:
         query_processor: QueryProcessor,
         k1: float = 1.5,
         b: float = 0.0,
-        semantic_weight: float = 0.50,
+        semantic_weight: float = 0.45,
     ) -> None:
 
         self._section_index = section_index
 
         self._query_processor = query_processor
 
-        self._semantic_weight = semantic_weight
-
         self._ranker = SmartSectionRanker()
+
+        self._semantic_weight = semantic_weight
 
         corpus = [
             list(section.tokens)
@@ -92,7 +92,8 @@ class BM25Retriever:
         )
 
         matches = self._filter(
-            matches
+            matches,
+            analyzed_query,
         )
 
         #
@@ -130,11 +131,24 @@ class BM25Retriever:
         weighted_query.extend(query.tokens)
 
         #
-        # Le entità sono molto importanti.
+        # Le entitÃ  sono molto importanti.
         #
 
-        for token in query.entities:
-            weighted_query.extend([token.lower()] * 3)
+        entities = (
+
+            query.semantic_entities
+
+            if query.semantic_entities
+
+            else query.entities
+
+        )
+
+        for token in entities:
+
+            weighted_query.extend(
+                [token.lower()] * 3
+            )
 
         #
         # I boosted token hanno peso doppio.
@@ -158,6 +172,10 @@ class BM25Retriever:
             weighted_query
         )
 
+        bm25_min = min(scores)
+
+        bm25_max = max(scores)
+
         query_vector = query.semantic_embedding
 
         matches: list[RetrievalMatch] = []
@@ -178,9 +196,45 @@ class BM25Retriever:
                     section.embedding,
                 )
 
+            #
+            # Normalize BM25.
+            #
+
+            normalized_bm25 = self._normalize(
+
+                bm25_score,
+
+                bm25_min,
+
+                bm25_max,
+
+            )
+
+            #
+            # Cosine is already in [-1,1].
+            #
+
+            normalized_semantic = min(
+                max(semantic_score, 0.0),
+                1.0,
+            )
+
+            #
+            # Hybrid score.
+            #
+
             final_score = (
-                bm25_score
-                + semantic_score * self._semantic_weight
+
+                normalized_bm25
+                *
+                (1.0 - self._semantic_weight)
+
+                +
+
+                normalized_semantic
+                *
+                self._semantic_weight
+
             )
 
             #
@@ -199,20 +253,23 @@ class BM25Retriever:
                 if token.lower() in title_tokens
             )
 
-            final_score += title_matches * 0.75
+            final_score += title_matches * 0.05
 
-            if final_score <= 0:
+            if final_score <= 0.05:
                 continue
 
             matches.append(
                 RetrievalMatch(
                     section=section,
-                    score=float(final_score),
+                    score=max(
+                        final_score,
+                        0.0,
+                    )
                 )
             )
 
         return matches
-    
+
     #
     # -------------------------------------------------------
     # Structural Ranking
@@ -269,7 +326,20 @@ class BM25Retriever:
     def _filter(
         self,
         matches: list[RetrievalMatch],
+        query: AnalyzedQuery,
     ) -> list[RetrievalMatch]:
+
+        if not matches:
+            return []
+
+        matches = [
+            match
+            for match in matches
+            if self._has_enough_query_support(
+                match,
+                query,
+            )
+        ]
 
         if not matches:
             return []
@@ -322,6 +392,73 @@ class BM25Retriever:
 
         return filtered
 
+    @staticmethod
+    def _has_enough_query_support(
+        match: RetrievalMatch,
+        query: AnalyzedQuery,
+    ) -> bool:
+        """
+        Rejects candidates that only match the named entity but miss the
+        actual information need.
+        """
+
+        required_tokens = {
+            token.lower()
+            for token in query.tokens
+        }
+
+        entity_tokens: set[str] = set()
+        has_multi_token_entity = False
+
+        for entity in (
+            query.semantic_entities
+            or query.entities
+        ):
+
+            parts = [
+                part.lower()
+                for part in entity.split()
+                if part.strip()
+            ]
+
+            if len(parts) > 1:
+                has_multi_token_entity = True
+
+            entity_tokens.update(
+                parts
+            )
+
+        required_tokens -= entity_tokens
+
+        if not required_tokens:
+            return True
+
+        if (
+            has_multi_token_entity
+            and len(required_tokens) == 1
+        ):
+            return True
+
+        section_tokens = {
+            token.lower()
+            for token in match.section.tokens
+        }
+
+        supported = len(
+            required_tokens
+            & section_tokens
+        )
+
+        support_ratio = (
+            supported
+            / len(required_tokens)
+        )
+
+        if len(required_tokens) == 1:
+            return supported == 1
+
+        return support_ratio >= 0.35
+
     #
     # -------------------------------------------------------
     # Utilities
@@ -369,6 +506,22 @@ class BM25Retriever:
             return 0.0
 
         return dot / (norm_a * norm_b)
+
+    @staticmethod
+    def _normalize(
+        value: float,
+        minimum: float,
+        maximum: float,
+    ) -> float:
+
+        if maximum <= minimum:
+            return 0.0
+
+        return (
+            value - minimum
+        ) / (
+            maximum - minimum
+        )
 
 
     #
@@ -475,7 +628,7 @@ class BM25Retriever:
     ) -> int:
 
         return len(matches)
-    
+
 
 
         #
@@ -582,4 +735,3 @@ class BM25Retriever:
     ) -> int:
 
         return len(matches)
-

@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from spacy.tokens import Doc, Token
 
+from knowledge_engine.retrieval.nlp.normalization.lemma_normalizer import (
+    LemmaNormalizer,
+)
+
 
 class KeywordExtractor:
     """
@@ -42,6 +46,13 @@ class KeywordExtractor:
         "conj",
     }
 
+    def __init__(
+        self,
+        normalizer: LemmaNormalizer | None = None,
+    ) -> None:
+
+        self._normalizer = normalizer or LemmaNormalizer()
+
     def extract(
         self,
         doc: Doc,
@@ -63,6 +74,10 @@ class KeywordExtractor:
 
             if not lemma:
                 continue
+
+            lemma = self._normalizer.normalize(
+                lemma
+            )
 
             scored_tokens.append(
                 (
